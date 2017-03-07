@@ -23,17 +23,17 @@ server <- function(input, output, session){
   },ignoreNULL= T)
   
   ###
-  # tests on search results. Decomment 1st to return to normal and remove other blocks till #####
+  # tests on submit button. remove other blocks till #####
   ###
   
-  # output$tableA <- renderDataTable({
-  #   annotations[c(rows()),c(1,7,8,9)]
-  # })
+  observeEvent(input$btn, {
+    cat(input$text, "\n")
+  })
+  
+  ###
 
   output$tableA = DT::renderDataTable(annotations[c(rows()),c(1,7,8,9)], server = TRUE)
 
-  #####
-  
   observeEvent(input$go, {
     toggleModal(session, "modal", "open")
   })

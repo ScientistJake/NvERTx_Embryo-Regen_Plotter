@@ -11,18 +11,60 @@ library(shinythemes)
 #here we start with the shiny
 library(shiny)
 
+jscode <- '
+$(function() {
+  var $els = $("[data-proxy-click]");
+  $.each(
+    $els,
+    function(idx, el) {
+      var $el = $(el);
+      var $proxy = $("#" + $el.data("proxyClick"));
+      $el.keydown(function (e) {
+        if (e.keyCode == 13) {
+          $proxy.click();
+        }
+      });
+    }
+  );
+});
+'
+
 #this makes the buttons and input
 ui <- fluidPage(theme = shinytheme("cerulean"),
                 headerPanel('NvERTx Embryo-Regen Plotter'),
                 sidebarPanel(
-                  textInput('search', 'Search for a gene', value = '',width = NULL, placeholder = "e.g. 'TCF'"),
+                  tags$head(tags$script(HTML(jscode))),
+                  tagAppendAttributes(
+                    textInput('search', 'Search for a gene', value = '',width = NULL, placeholder = "e.g. 'TCF'"),
+                    `data-proxy-click` = "go"
+                  ),
                   actionButton("go", "Search!"),
                   h4(""),
-                  textInput('gene1', 'Input NvERTx number', value = "", width = NULL, placeholder =  'e.g. NvERTx.2.133024'),
-                  textInput('gene2', 'Input another number or leave blank', value = "", width = NULL, placeholder = 'e.g. NvERTx.2.133024'),
-                  textInput('gene3', 'Input another number or leave blank', value = "", width = NULL, placeholder = 'e.g. NvERTx.2.133024'),
-                  textInput('gene4', 'Input another number or leave blank', value = "", width = NULL, placeholder = 'e.g. NvERTx.2.133024'),
-                  textInput('gene5', 'Input another number or leave blank', value = "", width = NULL, placeholder = 'e.g. NvERTx.2.133024'),
+                  tags$head(tags$script(HTML(jscode))),
+                  tagAppendAttributes(
+                    textInput('gene1', 'Input NvERTx number', value = "", width = NULL, placeholder =  'e.g. NvERTx.2.133024'),
+                    `data-proxy-click` = "do"
+                  ),
+                  tags$head(tags$script(HTML(jscode))),
+                  tagAppendAttributes(
+                    textInput('gene2', 'Input another number or leave blank', value = "", width = NULL, placeholder = 'e.g. NvERTx.2.133024'),
+                    `data-proxy-click` = "do"
+                  ),
+                  tags$head(tags$script(HTML(jscode))),
+                  tagAppendAttributes(
+                    textInput('gene3', 'Input another number or leave blank', value = "", width = NULL, placeholder = 'e.g. NvERTx.2.133024'),
+                    `data-proxy-click` = "do"
+                  ),
+                  tags$head(tags$script(HTML(jscode))),
+                  tagAppendAttributes(
+                    textInput('gene4', 'Input another number or leave blank', value = "", width = NULL, placeholder = 'e.g. NvERTx.2.133024'),
+                    `data-proxy-click` = "do"
+                  ),
+                  tags$head(tags$script(HTML(jscode))),
+                  tagAppendAttributes(
+                    textInput('gene5', 'Input another number or leave blank', value = "", width = NULL, placeholder = 'e.g. NvERTx.2.133024'),
+                    `data-proxy-click` = "do"
+                  ),
                   checkboxInput('log', 'Check for Log2', value = FALSE, width = NULL),
                   actionButton("do", "Evaluate!"),
                   checkboxInput('returnpdf', 'Output Regen pdf?', FALSE),
