@@ -22,17 +22,8 @@ server <- function(input, output, session){
     )
   },ignoreNULL= T)
   
-  ###
-  # tests on submit button. remove other blocks till #####
-  ###
-  
-  observeEvent(input$btn, {
-    cat(input$text, "\n")
-  })
-  
-  ###
 
-  output$tableA = DT::renderDataTable(annotations[c(rows()),c(1,7,8,9)], server = TRUE)
+  output$tableA = DT::renderDataTable(annotations[c(rows()),c(7,8,9)], server = TRUE)
 
   observeEvent(input$go, {
     toggleModal(session, "modal", "open")
