@@ -2,15 +2,17 @@ library(ggplot2)
 library(reshape2)
 library(plyr)
 library(shinyBS)
+library(shinythemes)
+library(Biostrings)
+library(DT)
+
 
 server <- function(input, output, session){
   
-  
-
   withProgress(message = 'Loading Data',
                detail = 'This may take a while...', value = 0, {
                  load(file = "Data.RData")
-              })
+               })
   
   rows <- eventReactive(input$go,{
     which(
@@ -19,26 +21,32 @@ server <- function(input, output, session){
       ) > 0
     )
   },ignoreNULL= T)
+  
+  ###
+  # tests on search results. Decomment 1st to return to normal and remove other blocks till #####
+  ###
+  
+  # output$tableA <- renderDataTable({
+  #   annotations[c(rows()),c(1,7,8,9)]
+  # })
 
-  
-  output$tableA <- renderTable({
-    annotations[c(rows()),c(1,7,8,9)]
-  })
-  
+  output$tableA = DT::renderDataTable(annotations[c(rows()),c(1,7,8,9)], server = TRUE)
+
+  #####
   
   observeEvent(input$go, {
     toggleModal(session, "modal", "open")
   })
   
   #### The Mfuzz inputs
-   M1 <- eventReactive(input$M1,{
-      annotations[annotations$Mfuzz_Clust %in% 1,c(1,4,5,7,8)] 
+  M1 <- eventReactive(input$M1,{
+    annotations[annotations$Mfuzz_Clust %in% 1,c(1,4,5,7,8)] 
   },ignoreNULL= T)
-   
-   output$tableM1 <- renderTable({
-     M1()[order(-M1()$Mfuzz_Score),]
-   })
-   
+  
+  output$tableM1 <- renderDataTable({
+    M1()[order(-M1()$Mfuzz_Score),]
+  })
+  
   observeEvent(input$M1, {
     toggleModal(session, "m1", "open")
   })
@@ -47,7 +55,7 @@ server <- function(input, output, session){
     annotations[annotations$Mfuzz_Clust %in% 2,c(1,4,5,7,8)] 
   },ignoreNULL= T)
   
-  output$tableM2 <- renderTable({
+  output$tableM2 <- renderDataTable({
     M2()[order(-M2()$Mfuzz_Score),]
   })
   
@@ -59,7 +67,7 @@ server <- function(input, output, session){
     annotations[annotations$Mfuzz_Clust %in% 3,c(1,4,5,7,8)] 
   },ignoreNULL= T)
   
-  output$tableM3 <- renderTable({
+  output$tableM3 <- renderDataTable({
     M3()[order(-M3()$Mfuzz_Score),]
   })
   
@@ -71,7 +79,7 @@ server <- function(input, output, session){
     annotations[annotations$Mfuzz_Clust %in% 4,c(1,4,5,7,8)] 
   },ignoreNULL= T)
   
-  output$tableM4 <- renderTable({
+  output$tableM4 <- renderDataTable({
     M4()[order(-M4()$Mfuzz_Score),]
   })
   
@@ -83,7 +91,7 @@ server <- function(input, output, session){
     annotations[annotations$Mfuzz_Clust %in% 5,c(1,4,5,7,8)] 
   },ignoreNULL= T)
   
-  output$tableM5 <- renderTable({
+  output$tableM5 <- renderDataTable({
     M5()[order(-M5()$Mfuzz_Score),]
   })
   
@@ -95,7 +103,7 @@ server <- function(input, output, session){
     annotations[annotations$Mfuzz_Clust %in% 6,c(1,4,5,7,8)] 
   },ignoreNULL= T)
   
-  output$tableM6 <- renderTable({
+  output$tableM6 <- renderDataTable({
     M6()[order(-M6()$Mfuzz_Score),]
   })
   
@@ -107,7 +115,7 @@ server <- function(input, output, session){
     annotations[annotations$Mfuzz_Clust %in% 7,c(1,4,5,7,8)] 
   },ignoreNULL= T)
   
-  output$tableM7 <- renderTable({
+  output$tableM7 <- renderDataTable({
     M7()[order(-M7()$Mfuzz_Score),]
   })
   
@@ -119,7 +127,7 @@ server <- function(input, output, session){
     annotations[annotations$Mfuzz_Clust %in% 8,c(1,4,5,7,8)] 
   },ignoreNULL= T)
   
-  output$tableM8 <- renderTable({
+  output$tableM8 <- renderDataTable({
     M8()[order(-M8()$Mfuzz_Score),]
   })
   
@@ -131,7 +139,7 @@ server <- function(input, output, session){
     annotations[annotations$Mfuzz_Clust %in% 9,c(1,4,5,7,8)] 
   },ignoreNULL= T)
   
-  output$tableM9 <- renderTable({
+  output$tableM9 <- renderDataTable({
     M9()[order(-M9()$Mfuzz_Score),]
   })
   
@@ -143,7 +151,7 @@ server <- function(input, output, session){
     annotations[annotations$Mfuzz_Clust %in% 10,c(1,4,5,7,8)] 
   },ignoreNULL= T)
   
-  output$tableM10 <- renderTable({
+  output$tableM10 <- renderDataTable({
     M10()[order(-M10()$Mfuzz_Score),]
   })
   
@@ -155,7 +163,7 @@ server <- function(input, output, session){
     annotations[annotations$Mfuzz_Clust %in% 11,c(1,4,5,7,8)] 
   },ignoreNULL= T)
   
-  output$tableM11 <- renderTable({
+  output$tableM11 <- renderDataTable({
     M11()[order(-M11()$Mfuzz_Score),]
   })
   
@@ -167,7 +175,7 @@ server <- function(input, output, session){
     annotations[annotations$Mfuzz_Clust %in% 12,c(1,4,5,7,8)] 
   },ignoreNULL= T)
   
-  output$tableM12 <- renderTable({
+  output$tableM12 <- renderDataTable({
     M12()[order(-M12()$Mfuzz_Score),]
   })
   
@@ -210,11 +218,11 @@ server <- function(input, output, session){
     }
   })
   
-
+  
   #the event reactive call here makes the code wait until the user clicks the evaluate button.
   #this assigns the NvERTx numbers to the nve object
   nve <- eventReactive(input$do, {
-    c(input$gene1, input$gene2, input$gene3, input$gene4, input$gene5)
+    c(trimws(input$gene1), trimws(input$gene2), trimws(input$gene3), trimws(input$gene4), trimws(input$gene5))
   }, ignoreNULL= T)
   
   #remove empty elements of the nve vector
@@ -222,6 +230,23 @@ server <- function(input, output, session){
     nve()[nve() != ""]
   })
   
+  #subset the fasta by queries
+  fasta2 <- reactive({
+    as.data.frame(fasta[which(names(fasta)==c(nve1()))])
+  })
+  
+  ###
+  # tests on fasta output. Decomment 1st to return to normal and remove other blocks till #####
+  ###
+  
+  #output the fastas
+  output$tableF <- renderTable({
+    fasta2()
+  })
+  
+  #output$tableF = DT::renderDataTable(fasta2(), server = FALSE)
+  
+  #####  
   
   #this subsets the count table by the nve numbers
   gene <- reactive({
@@ -242,7 +267,6 @@ server <- function(input, output, session){
   
   
   #note that I am NOT overwriting gene. I'm passing it to gene1. This avoids some crazy infinite loop error.
-  
   
   gene1 <- reactive({
     gene()[complete.cases(gene()),]
@@ -296,39 +320,45 @@ server <- function(input, output, session){
   Ht <- reactive({
     melt(H())
   })
-
   
   # this uses the SE values to make the error bar limits
   limits <- reactive(aes(ymax = genet()$value + genetSE()$value, ymin=genet()$value - genetSE()$value)) # This is the calculation for the error bars
   
-  #first we output the table.  It looks nicer in the long format, hence the 't' for transpose    
+  #first we output the table.  It looks nicer in the long format, hence the 't' for transpose
+  #tables are reordered with Id first when printed : last column first then column from 1 to last-1
   output$table <- renderTable({
-    (gene1())
+    gene1()[,c(ncol(gene1()),1:ncol(gene1())-1)]
   })
   output$table2 <- renderTable({
     annot()
   })
   output$table3 <- renderTable({
-    E()
+    E()[,c(ncol(E()),1:ncol(E())-1)]
   })
   output$table4 <- renderTable({
-    Fisch()
+    Fisch()[,c(ncol(Fisch()),1:ncol(Fisch())-1)]
   })
   output$table5 <- renderTable({
-    H()
+    H()[,c(ncol(H()),1:ncol(H())-1)]
   })
+  
+  ## test access col by selecting them
+  output$x4 = renderPrint({
+    s = input$tableA_rows_selected
+  })
+  ###
   
   #now we output the plot.  
   #this is the regen:
   p <- reactive({
-          ggplot(genet(), aes(x=as.numeric(as.character(genet()$variable)), y=value, colour=ID)) + geom_line() +
+    ggplot(genet(), aes(x=as.numeric(as.character(genet()$variable)), y=value, colour=ID)) + geom_line() +
       theme(axis.text.x = element_text(colour="grey20",size=12,angle=0,hjust=.5,vjust=.5,face="plain"),
             axis.text.y = element_text(colour="grey20",size=12,angle=0,hjust=1,vjust=0,face="plain"),  
             axis.title.x = element_text(colour="grey20",size=12,angle=0,hjust=.5,vjust=0,face="plain"),
             axis.title.y = element_text(colour="grey20",size=12,angle=90,hjust=.5,vjust=.5,face="plain"))
-     
+    
   })
- 
+  
   output$plot1 <- renderPlot({ 
     #to get the graph to show up in shiny you need to print 
     print(p()+ scale_x_continuous(minor_breaks = NULL, breaks=c(0,2,4,8,12,16,20,24,36,48,60,72,96,120,144)) +
@@ -342,13 +372,13 @@ server <- function(input, output, session){
     content = function(file) {
       device <- function(..., width, height) {
         grDevices::pdf(..., width = as.numeric(input$w), height=as.numeric(input$h)
-                       )
+        )
       }
       ggsave(file, plot = p()+ scale_x_continuous(minor_breaks = NULL, breaks=c(0,2,4,8,12,16,20,24,36,48,60,72,96,120,144)) +
                geom_errorbar(limits(), width=0.2) +
                ylab(y_label()) +
                xlab("Hours Post Amputation"), device = device)
-  })
+    })
   #embryo plot
   q <- reactive({
     ggplot(Egenet(), aes(x=as.numeric(as.character(Egenet()$variable)), y=value, colour=ID)) + geom_line() +
@@ -362,24 +392,24 @@ server <- function(input, output, session){
             axis.title.y = element_text(colour="grey20",size=12,angle=90,hjust=.5,vjust=.5,face="plain"))
   })
   output$plot2 <- renderPlot({ 
-      #to get the graph to show up in shiny you need to print 
-      print(q()+ scale_x_continuous(minor_breaks = NULL, breaks=c(0,6,12,24,48,72,96,120,144,168,192,120,240)) +
-              ylab("Log2 CPM") +
-              xlab("Hours Post Fertilization"))  
+    #to get the graph to show up in shiny you need to print 
+    print(q()+ scale_x_continuous(minor_breaks = NULL, breaks=c(0,6,12,24,48,72,96,120,144,168,192,120,240)) +
+            ylab("Log2 CPM") +
+            xlab("Hours Post Fertilization"))  
   })
   output$downloadPlot2 <- downloadHandler(
-      filename = 'Eplot.pdf',
-      content = function(file) {
-        device <- function(..., width, height) {
-          grDevices::pdf(..., width = as.numeric(input$w), height=as.numeric(input$h)
-          )
-        }
-        ggsave(file, plot = q()+ scale_x_continuous(minor_breaks = NULL, breaks=c(0,6,12,24,48,72,96,120,144,168,192,120,240)) +
-                 ylab("Log2(Counts per million +1)") +
-                 xlab("Hours Post Fertilization"), device = device)
+    filename = 'Eplot.pdf',
+    content = function(file) {
+      device <- function(..., width, height) {
+        grDevices::pdf(..., width = as.numeric(input$w), height=as.numeric(input$h)
+        )
       }
+      ggsave(file, plot = q()+ scale_x_continuous(minor_breaks = NULL, breaks=c(0,6,12,24,48,72,96,120,144,168,192,120,240)) +
+               ylab("Log2(Counts per million +1)") +
+               xlab("Hours Post Fertilization"), device = device)
+    }
   )
-        
+  
 }
 
 
