@@ -31,6 +31,17 @@ $(function() {
 
 #this makes the buttons and input
 ui <- fluidPage(theme = shinytheme("cerulean"),
+                tags$head(
+                  tags$style(HTML("
+                                  
+                                  #tableF {
+                                    width:auto;
+                                    word-wrap: break-word;
+                                    word-break: break-all;
+                                  }
+                                  
+                                  "))
+                  ),
                 headerPanel('NvERTx Embryo-Regen Plotter'),
                 sidebarPanel(
                   tags$head(tags$script(HTML(jscode))),
@@ -133,7 +144,6 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
                   tableOutput('table2'),
                   h4("Fasta"),
                   tableOutput("tableF")
-                  #DT::dataTableOutput("tableF",width=300)
                 )
                 
 )
