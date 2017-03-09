@@ -45,12 +45,13 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
                 headerPanel('NvERTx Embryo-Regen Plotter'),
                 sidebarPanel(
                   tags$head(tags$script(HTML(jscode))),
+                  h5("Search for a gene"),
                   tagAppendAttributes(
-                    textInput('search', 'Search for a gene', value = '',width = NULL, placeholder = "e.g. 'TCF'"),
+                    textInput('search', label=NULL, value = '',width = NULL, placeholder = "e.g. 'TCF'"),
                     `data-proxy-click` = "go"
                   ),
                   actionButton("go", "Search!"),
-                  h4(""),
+                  h5(a("or click here", href="http://134.59.51.195:4567/")," to blast against NvERTx.2"),
                   tags$head(tags$script(HTML(jscode))),
                   tagAppendAttributes(
                     textInput('gene1', 'Input NvERTx number', value = "", width = NULL, placeholder =  'e.g. NvERTx.2.133024'),
@@ -102,8 +103,7 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
                   bsModal("modal", "Search Results", "", size = "large", dataTableOutput('tableA'))
                 ),
                 mainPanel(
-                  img(src="Nematostella.png", height = 250, width = 250),
-                  h4("Explore Mfuzz Clusters:"),
+                  h3("Explore Mfuzz Clusters:"),
                   actionButton("M1", img(src="Mfuzz1.png", height = 125, width = 125)),
                   bsModal("m1", "Mfuzz1", "", size = "large", img(src="Mfuzz1.png", height = 350, width = 350),h4("Biological process GO enrichment:"),img(src="1-BP-plot-2.png", height = 450, width = 600),dataTableOutput('tableM1')),
                   actionButton("M2", img(src="Mfuzz2.png", height = 125, width = 125)),
@@ -128,22 +128,34 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
                   bsModal("m11", "Mfuzz11", "", size = "large", img(src="Mfuzz11.png", height = 350, width = 350),h4("Biological process GO enrichment:"),img(src="11-BP-plot-2.png", height = 450, width = 600),dataTableOutput('tableM11')),
                   actionButton("M12", img(src="Mfuzz12.png", height = 125, width = 125)),
                   bsModal("m12", "Mfuzz12", "", size = "large", img(src="Mfuzz12.png", height = 350, width = 350),h4("Biological process GO enrichment:"),img(src="12-BP-plot-2.png", height = 450, width = 600),dataTableOutput('tableM12')),
-                  h2("Regeneration Expression"),
-                  plotOutput("plot1"),
-                  h2("Embryonic Expression"),
-                  plotOutput("plot2"),
-                  h4("Regeneration average counts (hours post amputation)"),
-                  tableOutput('table'),
-                  h4("Warner et al. average counts (hours post fertilization)"),
-                  tableOutput('table3'),
-                  h4("Fischer et al. counts (hours post fertilization)"),
-                  tableOutput('table4'),
-                  h4("Helm et al. counts (hours post fertilization)"),
-                  tableOutput('table5'),
-                  h4("Annotation"),
-                  tableOutput('table2'),
-                  h4("Fasta"),
-                  tableOutput("tableF")
+                  h2("Results:"),
+                  tabsetPanel(type = "tabs", 
+                              tabPanel("Plots",
+                                       h4("Regeneration Expression"),
+                                       plotOutput("plot1"),
+                                       h4("Embryonic Expression"),
+                                       plotOutput("plot2")
+                                       ),
+                              tabPanel("Count Tables", 
+                                       h4("Regeneration average counts (hours post amputation)"),
+                                       tableOutput('table'),
+                                       h4("Warner et al. average counts (hours post fertilization)"),
+                                       tableOutput('table3'),
+                                       h4("Fischer et al. counts (hours post fertilization)"),
+                                       tableOutput('table4'),
+                                       h4("Helm et al. counts (hours post fertilization)"),
+                                       tableOutput('table5')
+                                       ),
+                              tabPanel("Annotation", 
+                                       h4("Annotation"),
+                                       tableOutput('table2')
+                                       ),
+                              tabPanel("Fasta", 
+                                       h4("Fasta"),
+                                       tableOutput("tableF")
+                              )
+                  )
+            
                 )
                 
 )
