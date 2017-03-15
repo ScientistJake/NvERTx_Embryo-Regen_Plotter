@@ -223,15 +223,15 @@ server <- function(input, output, session){
   
   #subset the fasta by queries
   fasta2 <- reactive({
-    a <- as.data.frame(fasta[which(names(fasta)==c(nve1()))])
-    colnames(a) <- (nve1())
+    a <- as.data.frame(fasta[which(names(fasta)%in%c(nve1()))])
+    colnames(a) <- c('sequence')
     a
   })
   
   #output the fastas
   output$tableF <- renderTable({
     fasta2()
-  })
+  },rownames = TRUE)
   
   #this subsets the count table by the nve numbers
   gene <- reactive({

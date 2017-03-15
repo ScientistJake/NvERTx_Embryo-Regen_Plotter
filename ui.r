@@ -38,8 +38,11 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
                                     width:auto;
                                     word-wrap: break-word;
                                     word-break: break-all;
+                                    font-family: Courier New;
                                   }
-                                  
+                                  #tableF td {
+                                    min-width: 150px;
+                                  }
                                   "))
                   ),
                 headerPanel('NvERTx Embryo-Regen Plotter'),
