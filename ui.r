@@ -7,6 +7,7 @@ library(reshape2)
 library(plyr)
 library(shinyBS)
 library(shinythemes)
+library(DT)
 
 #here we start with the shiny
 library(shiny)
@@ -43,6 +44,8 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
                                   #tableF td {
                                     min-width: 150px;
                                   }
+                                  }
+                                  
                                   "))
                   ),
                 headerPanel('NvERTx Embryo-Regen Plotter'),
@@ -55,6 +58,7 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
                   ),
                   actionButton("go", "Search!"),
                   h5(a("or click here", href="http://134.59.51.195:4567/")," to blast against NvERTx.2"),
+                  h4(""),
                   tags$head(tags$script(HTML(jscode))),
                   tagAppendAttributes(
                     textInput('gene1', 'Input NvERTx number', value = "", width = NULL, placeholder =  'e.g. NvERTx.2.133024'),
@@ -103,10 +107,10 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
                 ),
                 
                 mainPanel(
-                  bsModal("modal", "Search Results", "", size = "large", dataTableOutput('tableA'))
+                  bsModal("modal", "Search Results", "", size = "large", DT::dataTableOutput('tableA'))
                 ),
                 mainPanel(
-                  h3("Explore Mfuzz Clusters:"),
+                  h4("Explore Mfuzz Clusters:"),
                   actionButton("M1", img(src="Mfuzz1.png", height = 125, width = 125)),
                   bsModal("m1", "Mfuzz1", "", size = "large", img(src="Mfuzz1.png", height = 350, width = 350),h4("Biological process GO enrichment:"),img(src="1-BP-plot-2.png", height = 450, width = 600),dataTableOutput('tableM1')),
                   actionButton("M2", img(src="Mfuzz2.png", height = 125, width = 125)),
@@ -156,10 +160,11 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
                               tabPanel("Fasta", 
                                        h4("Fasta"),
                                        tableOutput("tableF")
-                              )
-                  )
-            
+                                       ),
+                              tabPanel("PubMed Hits", 
+                                       h4("PubMed Hits"),
+                                       DT::dataTableOutput("tableP")
+                                      )
                 )
                 
-)
-
+))

@@ -5,6 +5,9 @@ library(shinyBS)
 library(shinythemes)
 library(Biostrings)
 library(DT)
+library(XML)
+library(RCurl)
+library(plyr)
 
 
 server <- function(input, output, session){
@@ -23,7 +26,7 @@ server <- function(input, output, session){
   },ignoreNULL= T)
   
 
-  output$tableA = DT::renderDataTable(annotations[c(rows()),c(7,8,9)], server = TRUE)
+  output$tableA = DT::renderDataTable(annotations[c(rows()),c(7,8,9)], server = T)
 
   observeEvent(input$go, {
     toggleModal(session, "modal", "open")
@@ -31,7 +34,7 @@ server <- function(input, output, session){
   
   #### The Mfuzz inputs
   M1 <- eventReactive(input$M1,{
-    annotations[annotations$Mfuzz_Clust %in% 1,c(1,4,5,7,8)] 
+    annotations[annotations$Mfuzz_Clust %in% 1,c(4,5,7,8)] 
   },ignoreNULL= T)
   
   output$tableM1 <- renderDataTable({
@@ -43,7 +46,7 @@ server <- function(input, output, session){
   })
   
   M2 <- eventReactive(input$M2,{
-    annotations[annotations$Mfuzz_Clust %in% 2,c(1,4,5,7,8)] 
+    annotations[annotations$Mfuzz_Clust %in% 2,c(4,5,7,8)] 
   },ignoreNULL= T)
   
   output$tableM2 <- renderDataTable({
@@ -55,7 +58,7 @@ server <- function(input, output, session){
   })
   
   M3 <- eventReactive(input$M3,{
-    annotations[annotations$Mfuzz_Clust %in% 3,c(1,4,5,7,8)] 
+    annotations[annotations$Mfuzz_Clust %in% 3,c(4,5,7,8)] 
   },ignoreNULL= T)
   
   output$tableM3 <- renderDataTable({
@@ -67,7 +70,7 @@ server <- function(input, output, session){
   })
   
   M4 <- eventReactive(input$M4,{
-    annotations[annotations$Mfuzz_Clust %in% 4,c(1,4,5,7,8)] 
+    annotations[annotations$Mfuzz_Clust %in% 4,c(4,5,7,8)] 
   },ignoreNULL= T)
   
   output$tableM4 <- renderDataTable({
@@ -79,7 +82,7 @@ server <- function(input, output, session){
   })
   
   M5 <- eventReactive(input$M5,{
-    annotations[annotations$Mfuzz_Clust %in% 5,c(1,4,5,7,8)] 
+    annotations[annotations$Mfuzz_Clust %in% 5,c(4,5,7,8)] 
   },ignoreNULL= T)
   
   output$tableM5 <- renderDataTable({
@@ -91,7 +94,7 @@ server <- function(input, output, session){
   })
   
   M6 <- eventReactive(input$M6,{
-    annotations[annotations$Mfuzz_Clust %in% 6,c(1,4,5,7,8)] 
+    annotations[annotations$Mfuzz_Clust %in% 6,c(4,5,7,8)] 
   },ignoreNULL= T)
   
   output$tableM6 <- renderDataTable({
@@ -103,7 +106,7 @@ server <- function(input, output, session){
   })
   
   M7 <- eventReactive(input$M7,{
-    annotations[annotations$Mfuzz_Clust %in% 7,c(1,4,5,7,8)] 
+    annotations[annotations$Mfuzz_Clust %in% 7,c(4,5,7,8)] 
   },ignoreNULL= T)
   
   output$tableM7 <- renderDataTable({
@@ -115,7 +118,7 @@ server <- function(input, output, session){
   })
   
   M8 <- eventReactive(input$M8,{
-    annotations[annotations$Mfuzz_Clust %in% 8,c(1,4,5,7,8)] 
+    annotations[annotations$Mfuzz_Clust %in% 8,c(4,5,7,8)] 
   },ignoreNULL= T)
   
   output$tableM8 <- renderDataTable({
@@ -127,7 +130,7 @@ server <- function(input, output, session){
   })
   
   M9 <- eventReactive(input$M9,{
-    annotations[annotations$Mfuzz_Clust %in% 9,c(1,4,5,7,8)] 
+    annotations[annotations$Mfuzz_Clust %in% 9,c(4,5,7,8)] 
   },ignoreNULL= T)
   
   output$tableM9 <- renderDataTable({
@@ -139,7 +142,7 @@ server <- function(input, output, session){
   })
   
   M10 <- eventReactive(input$M10,{
-    annotations[annotations$Mfuzz_Clust %in% 10,c(1,4,5,7,8)] 
+    annotations[annotations$Mfuzz_Clust %in% 10,c(4,5,7,8)] 
   },ignoreNULL= T)
   
   output$tableM10 <- renderDataTable({
@@ -151,7 +154,7 @@ server <- function(input, output, session){
   })
   
   M11 <- eventReactive(input$M11,{
-    annotations[annotations$Mfuzz_Clust %in% 11,c(1,4,5,7,8)] 
+    annotations[annotations$Mfuzz_Clust %in% 11,c(4,5,7,8)] 
   },ignoreNULL= T)
   
   output$tableM11 <- renderDataTable({
@@ -163,7 +166,7 @@ server <- function(input, output, session){
   })
   
   M12 <- eventReactive(input$M12,{
-    annotations[annotations$Mfuzz_Clust %in% 12,c(1,4,5,7,8)] 
+    annotations[annotations$Mfuzz_Clust %in% 12,c(4,5,7,8)] 
   },ignoreNULL= T)
   
   output$tableM12 <- renderDataTable({
@@ -233,6 +236,7 @@ server <- function(input, output, session){
     fasta2()
   },rownames = TRUE)
   
+
   #this subsets the count table by the nve numbers
   gene <- reactive({
     counts()[c(nve1()),]
@@ -325,6 +329,47 @@ server <- function(input, output, session){
   })
   output$table5 <- renderTable({
     H()[,c(ncol(H()),1:ncol(H())-1)]
+  })
+  
+  ##output the PubMed URLs:
+  pubURLs <- reactive({
+    pubs <- strsplit(as.character(annot()$Top_NrHit..e.val), '|', fixed=TRUE)
+    pubsp <- lapply(pubs, '[', 2)
+    
+    #This gets the primary reference
+    urls <- lapply(pubsp,function(i) {
+      if (is.na(i)) {
+        print(c("Not available"))
+      } else {
+        print(paste0("<a href='https://www.ncbi.nlm.nih.gov/pubmed?LinkName=protein_pubmed&from_uid=",i,"'>Primary PubMed Link</a>"))
+      }})
+    
+    #This tries to get the link to more references:
+    
+    more <- lapply(pubsp,function(i) {
+      if (is.na(i)) {
+        print(c("Not available"))
+      } else {
+        pubExtra <- getURL(paste0("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?dbfrom=protein&dbto=pubmed&cmd=neighbor&retmode=xml&id=",i))
+        pubExtraParse <- xmlParse(pubExtra)
+        xml_data <- xmlToList(pubExtraParse)
+        pubExtraID <- as.list(xml_data[["LinkSet"]][["LinkSetDb"]][["Link"]][["Id"]])
+          if (length(pubExtraID) > 0){
+            print(paste0("<a href='https://www.ncbi.nlm.nih.gov/pubmed?linkname=pubmed_pubmed&from_uid=",pubExtraID,"'>More PubMed Links</a>"))
+          } else {
+            print(c("Not available"))
+          }
+      }})
+    
+    urltable <- cbind(annot()$NvERTx_ID, urls, more)
+    colnames(urltable) <- c("NvERTx_ID", "PubMed Link", "Extra Links")
+    urltable
+  })
+  
+  
+  output$tableP <- DT::renderDataTable({
+    datatable(pubURLs(), 
+      options = list(dom = 't'))
   })
   
   ## test access col by selecting them
