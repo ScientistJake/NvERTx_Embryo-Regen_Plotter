@@ -155,7 +155,8 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
                                        ),
                               tabPanel("Annotation", 
                                        h4("Annotation"),
-                                       tableOutput('table2')
+                                       p("Click '+' for extra hits"),
+                                       DT::dataTableOutput('table2')
                                        ),
                               tabPanel("Fasta", 
                                        h4("Fasta"),

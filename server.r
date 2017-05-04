@@ -26,7 +26,46 @@ server <- function(input, output, session){
   },ignoreNULL= T)
   
 
-  output$tableA = DT::renderDataTable(annotations[c(rows()),c(7,8,9)], server = T)
+  output$tableA = renderDataTable({
+    search <- annotations[c(rows()),c(7,8,9)]
+    NvERtx_ID <- row.names(search)
+    datatable( cbind(' ' = '&oplus;',NvERtx_ID, search),
+             rownames = T,
+             escape = F,
+             options = list(dom = 'ft', 
+                            columnDefs = list(
+                              list(visible = FALSE, targets = c(0,5)),
+                              list(orderable = FALSE, className = 'details-control', targets = 1)
+                            )
+             ),
+             callback = JS("table.column(1).nodes().to$().css({cursor: 'pointer'});
+                var format = function(d) {
+                  return '<div style=\"background-color:#eee; padding: .5em;\"> Extra Hits: ' +
+                  d[5] + '</div>';
+                  };
+                table.on('click', 'td.details-control', function() {
+                  var td = $(this), row = table.row(td.closest('tr'));
+                  if (row.child.isShown()) {
+                    row.child.hide();
+                    td.html('&oplus;');
+                  } else {
+                    row.child(format(row.data())).show();
+                    td.html('&CircleMinus;');
+                  }
+              });"
+             ))
+  })
+  
+  #this code block updates the inputs if a row is clicked on the pop-up table
+  observe({
+    search <- annotations[c(rows()),c(7,8,9)]
+    Aclicked = input$tableA_rows_selected
+    updateTextInput(session, "gene1", value = row.names(search)[Aclicked[1]])
+    updateTextInput(session, "gene2", value = row.names(search)[Aclicked[2]])
+    updateTextInput(session, "gene3", value = row.names(search)[Aclicked[3]])
+    updateTextInput(session, "gene4", value = row.names(search)[Aclicked[4]])
+    updateTextInput(session, "gene5", value = row.names(search)[Aclicked[5]])
+  })
 
   observeEvent(input$go, {
     toggleModal(session, "modal", "open")
@@ -34,147 +73,278 @@ server <- function(input, output, session){
   
   #### The Mfuzz inputs
   M1 <- eventReactive(input$M1,{
-    annotations[annotations$Mfuzz_Clust %in% 1,c(4,5,7,8)] 
+    M1 <- annotations[annotations$Mfuzz_Clust %in% 1,c(4,5,7,8)] 
+    M1[order(-M1$Mfuzz_Score),]
   },ignoreNULL= T)
   
   output$tableM1 <- renderDataTable({
-    M1()[order(-M1()$Mfuzz_Score),]
+    M1()
   })
   
   observeEvent(input$M1, {
     toggleModal(session, "m1", "open")
   })
   
+  #this code block updates the inputs if a row is clicked on the pop-up table
+  observe({
+    m1clicked = input$tableM1_rows_selected
+      updateTextInput(session, "gene1", value = row.names(M1())[m1clicked[1]])
+      updateTextInput(session, "gene2", value = row.names(M1())[m1clicked[2]])
+      updateTextInput(session, "gene3", value = row.names(M1())[m1clicked[3]])
+      updateTextInput(session, "gene4", value = row.names(M1())[m1clicked[4]])
+      updateTextInput(session, "gene5", value = row.names(M1())[m1clicked[5]])
+  })
+  
   M2 <- eventReactive(input$M2,{
-    annotations[annotations$Mfuzz_Clust %in% 2,c(4,5,7,8)] 
+    M2 <- annotations[annotations$Mfuzz_Clust %in% 2,c(4,5,7,8)] 
+    M2[order(-M2$Mfuzz_Score),]
   },ignoreNULL= T)
   
   output$tableM2 <- renderDataTable({
-    M2()[order(-M2()$Mfuzz_Score),]
+    M2()
   })
   
   observeEvent(input$M2, {
     toggleModal(session, "m2", "open")
   })
   
+  #this code block updates the inputs if a row is clicked on the pop-up table
+  observe({
+    m2clicked = input$tableM2_rows_selected
+    updateTextInput(session, "gene1", value = row.names(M2())[m2clicked[1]])
+    updateTextInput(session, "gene2", value = row.names(M2())[m2clicked[2]])
+    updateTextInput(session, "gene3", value = row.names(M2())[m2clicked[3]])
+    updateTextInput(session, "gene4", value = row.names(M2())[m2clicked[4]])
+    updateTextInput(session, "gene5", value = row.names(M2())[m2clicked[5]])
+  })
+  
   M3 <- eventReactive(input$M3,{
-    annotations[annotations$Mfuzz_Clust %in% 3,c(4,5,7,8)] 
+    M3<- annotations[annotations$Mfuzz_Clust %in% 3,c(4,5,7,8)] 
+    M3[order(-M3$Mfuzz_Score),]
   },ignoreNULL= T)
   
   output$tableM3 <- renderDataTable({
-    M3()[order(-M3()$Mfuzz_Score),]
+    M3()
   })
   
   observeEvent(input$M3, {
     toggleModal(session, "m3", "open")
   })
   
+  #this code block updates the inputs if a row is clicked on the pop-up table
+  observe({
+    m3clicked = input$tableM3_rows_selected
+    updateTextInput(session, "gene1", value = row.names(M3())[m3clicked[1]])
+    updateTextInput(session, "gene2", value = row.names(M3())[m3clicked[2]])
+    updateTextInput(session, "gene3", value = row.names(M3())[m3clicked[3]])
+    updateTextInput(session, "gene4", value = row.names(M3())[m3clicked[4]])
+    updateTextInput(session, "gene5", value = row.names(M3())[m3clicked[5]])
+  })
+  
   M4 <- eventReactive(input$M4,{
-    annotations[annotations$Mfuzz_Clust %in% 4,c(4,5,7,8)] 
+    M4 <- annotations[annotations$Mfuzz_Clust %in% 4,c(4,5,7,8)] 
+    M4[order(-M4$Mfuzz_Score),]
   },ignoreNULL= T)
   
   output$tableM4 <- renderDataTable({
-    M4()[order(-M4()$Mfuzz_Score),]
+    M4()
   })
   
   observeEvent(input$M4, {
     toggleModal(session, "m4", "open")
   })
   
+  #this code block updates the inputs if a row is clicked on the pop-up table
+  observe({
+    m4clicked = input$tableM4_rows_selected
+    updateTextInput(session, "gene1", value = row.names(M4())[m4clicked[1]])
+    updateTextInput(session, "gene2", value = row.names(M4())[m4clicked[2]])
+    updateTextInput(session, "gene3", value = row.names(M4())[m4clicked[3]])
+    updateTextInput(session, "gene4", value = row.names(M4())[m4clicked[4]])
+    updateTextInput(session, "gene5", value = row.names(M4())[m4clicked[5]])
+  })
+  
   M5 <- eventReactive(input$M5,{
-    annotations[annotations$Mfuzz_Clust %in% 5,c(4,5,7,8)] 
+    M5 <- annotations[annotations$Mfuzz_Clust %in% 5,c(4,5,7,8)] 
+    M5[order(-M5$Mfuzz_Score),]
   },ignoreNULL= T)
   
   output$tableM5 <- renderDataTable({
-    M5()[order(-M5()$Mfuzz_Score),]
+    M5()
   })
   
   observeEvent(input$M5, {
     toggleModal(session, "m5", "open")
   })
   
+  #this code block updates the inputs if a row is clicked on the pop-up table
+  observe({
+    m5clicked = input$tableM5_rows_selected
+    updateTextInput(session, "gene1", value = row.names(M5())[m5clicked[1]])
+    updateTextInput(session, "gene2", value = row.names(M5())[m5clicked[2]])
+    updateTextInput(session, "gene3", value = row.names(M5())[m5clicked[3]])
+    updateTextInput(session, "gene4", value = row.names(M5())[m5clicked[4]])
+    updateTextInput(session, "gene5", value = row.names(M5())[m5clicked[5]])
+  })
+  
   M6 <- eventReactive(input$M6,{
-    annotations[annotations$Mfuzz_Clust %in% 6,c(4,5,7,8)] 
+    M6 <- annotations[annotations$Mfuzz_Clust %in% 6,c(4,5,7,8)]
+    M6[order(-M6$Mfuzz_Score),]
   },ignoreNULL= T)
   
   output$tableM6 <- renderDataTable({
-    M6()[order(-M6()$Mfuzz_Score),]
+    M6()
   })
   
   observeEvent(input$M6, {
     toggleModal(session, "m6", "open")
   })
   
+  #this code block updates the inputs if a row is clicked on the pop-up table
+  observe({
+    m6clicked = input$tableM6_rows_selected
+    updateTextInput(session, "gene1", value = row.names(M6())[m6clicked[1]])
+    updateTextInput(session, "gene2", value = row.names(M6())[m6clicked[2]])
+    updateTextInput(session, "gene3", value = row.names(M6())[m6clicked[3]])
+    updateTextInput(session, "gene4", value = row.names(M6())[m6clicked[4]])
+    updateTextInput(session, "gene5", value = row.names(M6())[m6clicked[5]])
+  })
+  
   M7 <- eventReactive(input$M7,{
-    annotations[annotations$Mfuzz_Clust %in% 7,c(4,5,7,8)] 
+    M7 <- annotations[annotations$Mfuzz_Clust %in% 7,c(4,5,7,8)]
+    M7[order(-M7$Mfuzz_Score),]
   },ignoreNULL= T)
   
   output$tableM7 <- renderDataTable({
-    M7()[order(-M7()$Mfuzz_Score),]
+    M7()
   })
   
   observeEvent(input$M7, {
     toggleModal(session, "m7", "open")
   })
+  #this code block updates the inputs if a row is clicked on the pop-up table
+  observe({
+    m7clicked = input$tableM7_rows_selected
+    updateTextInput(session, "gene1", value = row.names(M7())[m7clicked[1]])
+    updateTextInput(session, "gene2", value = row.names(M7())[m7clicked[2]])
+    updateTextInput(session, "gene3", value = row.names(M7())[m7clicked[3]])
+    updateTextInput(session, "gene4", value = row.names(M7())[m7clicked[4]])
+    updateTextInput(session, "gene5", value = row.names(M7())[m7clicked[5]])
+  })
   
   M8 <- eventReactive(input$M8,{
-    annotations[annotations$Mfuzz_Clust %in% 8,c(4,5,7,8)] 
+    M8 <- annotations[annotations$Mfuzz_Clust %in% 8,c(4,5,7,8)] 
+    M8[order(-M8$Mfuzz_Score),]
   },ignoreNULL= T)
   
   output$tableM8 <- renderDataTable({
-    M8()[order(-M8()$Mfuzz_Score),]
+    M8()
   })
   
   observeEvent(input$M8, {
     toggleModal(session, "m8", "open")
   })
   
+  #this code block updates the inputs if a row is clicked on the pop-up table
+  observe({
+    m8clicked = input$tableM8_rows_selected
+    updateTextInput(session, "gene1", value = row.names(M8())[m8clicked[1]])
+    updateTextInput(session, "gene2", value = row.names(M8())[m8clicked[2]])
+    updateTextInput(session, "gene3", value = row.names(M8())[m8clicked[3]])
+    updateTextInput(session, "gene4", value = row.names(M8())[m8clicked[4]])
+    updateTextInput(session, "gene5", value = row.names(M8())[m8clicked[5]])
+  })
+  
   M9 <- eventReactive(input$M9,{
-    annotations[annotations$Mfuzz_Clust %in% 9,c(4,5,7,8)] 
+    M9 <- annotations[annotations$Mfuzz_Clust %in% 9,c(4,5,7,8)]
+    M9[order(-M9$Mfuzz_Score),]
   },ignoreNULL= T)
   
   output$tableM9 <- renderDataTable({
-    M9()[order(-M9()$Mfuzz_Score),]
+    M9()
   })
   
   observeEvent(input$M9, {
     toggleModal(session, "m9", "open")
   })
   
+  #this code block updates the inputs if a row is clicked on the pop-up table
+  observe({
+    m9clicked = input$tableM9_rows_selected
+    updateTextInput(session, "gene1", value = row.names(M9())[m9clicked[1]])
+    updateTextInput(session, "gene2", value = row.names(M9())[m9clicked[2]])
+    updateTextInput(session, "gene3", value = row.names(M9())[m9clicked[3]])
+    updateTextInput(session, "gene4", value = row.names(M9())[m9clicked[4]])
+    updateTextInput(session, "gene5", value = row.names(M9())[m9clicked[5]])
+  })
+  
   M10 <- eventReactive(input$M10,{
-    annotations[annotations$Mfuzz_Clust %in% 10,c(4,5,7,8)] 
+    M10 <- annotations[annotations$Mfuzz_Clust %in% 10,c(4,5,7,8)]
+    M10[order(-M10$Mfuzz_Score),]
   },ignoreNULL= T)
   
   output$tableM10 <- renderDataTable({
-    M10()[order(-M10()$Mfuzz_Score),]
+    M10()
   })
   
   observeEvent(input$M10, {
     toggleModal(session, "m10", "open")
   })
   
+  #this code block updates the inputs if a row is clicked on the pop-up table
+  observe({
+    m10clicked = input$tableM10_rows_selected
+    updateTextInput(session, "gene1", value = row.names(M10())[m10clicked[1]])
+    updateTextInput(session, "gene2", value = row.names(M10())[m10clicked[2]])
+    updateTextInput(session, "gene3", value = row.names(M10())[m10clicked[3]])
+    updateTextInput(session, "gene4", value = row.names(M10())[m10clicked[4]])
+    updateTextInput(session, "gene5", value = row.names(M10())[m10clicked[5]])
+  })
+  
   M11 <- eventReactive(input$M11,{
-    annotations[annotations$Mfuzz_Clust %in% 11,c(4,5,7,8)] 
+    M11 <- annotations[annotations$Mfuzz_Clust %in% 11,c(4,5,7,8)]
+    M11[order(-M11$Mfuzz_Score),]
   },ignoreNULL= T)
   
   output$tableM11 <- renderDataTable({
-    M11()[order(-M11()$Mfuzz_Score),]
+    M11()
   })
   
   observeEvent(input$M11, {
     toggleModal(session, "m11", "open")
   })
   
+  #this code block updates the inputs if a row is clicked on the pop-up table
+  observe({
+    m11clicked = input$tableM11_rows_selected
+    updateTextInput(session, "gene1", value = row.names(M11())[m11clicked[1]])
+    updateTextInput(session, "gene2", value = row.names(M11())[m11clicked[2]])
+    updateTextInput(session, "gene3", value = row.names(M11())[m11clicked[3]])
+    updateTextInput(session, "gene4", value = row.names(M11())[m11clicked[4]])
+    updateTextInput(session, "gene5", value = row.names(M11())[m11clicked[5]])
+  })
+  
   M12 <- eventReactive(input$M12,{
-    annotations[annotations$Mfuzz_Clust %in% 12,c(4,5,7,8)] 
+    M12 <- annotations[annotations$Mfuzz_Clust %in% 12,c(4,5,7,8)] 
+    M12[order(-M12$Mfuzz_Score),]
   },ignoreNULL= T)
   
   output$tableM12 <- renderDataTable({
-    M12()[order(-M12()$Mfuzz_Score),]
+    M12()
   })
   
   observeEvent(input$M12, {
     toggleModal(session, "m12", "open")
+  })
+  
+  #this code block updates the inputs if a row is clicked on the pop-up table
+  observe({
+    m12clicked = input$tableM12_rows_selected
+    updateTextInput(session, "gene1", value = row.names(M12())[m12clicked[1]])
+    updateTextInput(session, "gene2", value = row.names(M12())[m12clicked[2]])
+    updateTextInput(session, "gene3", value = row.names(M12())[m12clicked[3]])
+    updateTextInput(session, "gene4", value = row.names(M12())[m12clicked[4]])
+    updateTextInput(session, "gene5", value = row.names(M12())[m12clicked[5]])
   })
   
   #End of Mfuzz inputs
@@ -318,9 +488,70 @@ server <- function(input, output, session){
   output$table <- renderTable({
     gene1()[,c(ncol(gene1()),1:ncol(gene1())-1)]
   })
-  output$table2 <- renderTable({
-    annot()
+  
+  # build up the annotation table with clickable links:
+  annotTable <- reactive({
+    uprot <- annot()$Uniprot_ID
+    uprotURL <- lapply(uprot,function(i) {
+      if (is.na(i)) {
+        print(c("Not Available"))
+      } else {
+        if (i=="No_Uniprotmatch") {
+          print(c("No Uniprot match"))
+        } else {
+        print(paste0("<a href='http://www.uniprot.org/uniprot/",i,"'>",i,"</a>"))
+    }}})
+    
+    annotTable <- annot()
+    annotTable$Uniprot_ID <- uprotURL
+    
+    NCBI <- strsplit(as.character(annot()$Top_NrHit..e.val), '|', fixed=TRUE)
+    NCBI1 <- lapply(NCBI, '[', 1)
+    NCBI2 <- lapply(NCBI, '[', 2)
+    NCBI3 <- lapply(NCBI, '[', 3)
+    NCBI4 <- lapply(NCBI, '[', 4)
+    NCBI5 <- lapply(NCBI, '[', 5)
+    NCBILink <- lapply(NCBI4,function(i) {
+      if (is.na(i)) {
+        print(c("No_Nr_Hit"))
+      } else {
+        print(paste0("<a href='https://www.ncbi.nlm.nih.gov/protein/",i,"'>",i,"</a>"))
+      }})
+    
+    annotTable$Top_NrHit..e.val <- paste0(NCBI1,NCBI2,NCBI3,NCBILink,NCBI5)
+    annotTable
   })
+  
+  #this makes the datatable expandle when you click the icon
+  output$table2 <- DT::renderDataTable({
+    datatable( cbind(' ' = '&oplus;', annotTable()),
+              rownames = T,
+              escape = F,
+              selection = 'none',
+              options = list(dom = 'ft', 
+                columnDefs = list(
+                  list(visible = FALSE, targets = c(0,10)),
+                  list(orderable = FALSE, className = 'details-control', targets = 1)
+                )
+              ),
+              callback = JS("table.column(1).nodes().to$().css({cursor: 'pointer'});
+                var format = function(d) {
+                  return '<div style=\"background-color:#eee; padding: .5em;\"> Extra Hits: ' +
+                  d[10] + '</div>';
+                  };
+                table.on('click', 'td.details-control', function() {
+                  var td = $(this), row = table.row(td.closest('tr'));
+                  if (row.child.isShown()) {
+                    row.child.hide();
+                    td.html('&oplus;');
+                  } else {
+                    row.child(format(row.data())).show();
+                    td.html('&CircleMinus;');
+                  }
+              });"
+              ))
+  })
+  
   output$table3 <- renderTable({
     E()[,c(ncol(E()),1:ncol(E())-1)]
   })
@@ -365,7 +596,6 @@ server <- function(input, output, session){
     colnames(urltable) <- c("NvERTx_ID", "PubMed Link", "Extra Links")
     urltable
   })
-  
   
   output$tableP <- DT::renderDataTable({
     datatable(pubURLs(), 
