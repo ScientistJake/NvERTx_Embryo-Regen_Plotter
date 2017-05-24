@@ -8,9 +8,16 @@ library(DT)
 library(XML)
 library(RCurl)
 library(plyr)
+library(emoGG)
 
 
 server <- function(input, output, session){
+  
+#  output$frame <- renderUI({
+#    my_test <- tags$iframe(src="http://134.59.51.195:4567/", height=600, width=1000)
+#    print(my_test)
+#    my_test
+#  })
   
   withProgress(message = 'Loading Data',
                detail = 'This may take a while...', value = 0, {
@@ -26,8 +33,32 @@ server <- function(input, output, session){
   },ignoreNULL= T)
   
 
+  #This is the converstion Tool for NvERTX.2 to NvERTx.4
+
+  NewIDS <- eventReactive(input$convert,{
+    old_IDS <- trimws(unlist(strsplit(as.character(input$NveConvert), ',', fixed=TRUE)))
+    IDtable[IDtable$NvERTx.2 %in% old_IDS,]
+  },ignoreNULL= T)
+  
+  output$conversionTable <- renderDataTable({
+    NewIDS()
+  }, rownames= FALSE)
+  
+  observeEvent(input$convert, {
+    toggleModal(session, "converted", "open")
+  })
+  
+  observe({
+    NewIDSclicked = input$conversionTable_rows_selected
+    updateTextInput(session, "gene1", value = NewIDS()$NvERTx.4[NewIDSclicked[1]])
+    updateTextInput(session, "gene2", value = NewIDS()$NvERTx.4[NewIDSclicked[2]])
+    updateTextInput(session, "gene3", value = NewIDS()$NvERTx.4[NewIDSclicked[3]])
+    updateTextInput(session, "gene4", value = NewIDS()$NvERTx.4[NewIDSclicked[4]])
+    updateTextInput(session, "gene5", value = NewIDS()$NvERTx.4[NewIDSclicked[5]])
+  })
+  
   output$tableA = renderDataTable({
-    search <- annotations[c(rows()),c(7,8,9)]
+    search <- annotations[c(rows()),c(9,10,11)]
     NvERtx_ID <- row.names(search)
     datatable( cbind(' ' = '&oplus;',NvERtx_ID, search),
              rownames = T,
@@ -73,8 +104,8 @@ server <- function(input, output, session){
   
   #### The Mfuzz inputs
   M1 <- eventReactive(input$M1,{
-    M1 <- annotations[annotations$Mfuzz_Clust %in% 1,c(4,5,7,8)] 
-    M1[order(-M1$Mfuzz_Score),]
+    M1 <- annotations[annotations$Mfuzz_R_Clust %in% c("R-1"),c(4,5,9,10)] 
+    M1[order(-M1$Mfuzz_R_Score),]
   },ignoreNULL= T)
   
   output$tableM1 <- renderDataTable({
@@ -96,8 +127,8 @@ server <- function(input, output, session){
   })
   
   M2 <- eventReactive(input$M2,{
-    M2 <- annotations[annotations$Mfuzz_Clust %in% 2,c(4,5,7,8)] 
-    M2[order(-M2$Mfuzz_Score),]
+    M2 <- annotations[annotations$Mfuzz_R_Clust %in% c("R-2"),c(4,5,9,10)] 
+    M2[order(-M2$Mfuzz_R_Score),]
   },ignoreNULL= T)
   
   output$tableM2 <- renderDataTable({
@@ -119,8 +150,8 @@ server <- function(input, output, session){
   })
   
   M3 <- eventReactive(input$M3,{
-    M3<- annotations[annotations$Mfuzz_Clust %in% 3,c(4,5,7,8)] 
-    M3[order(-M3$Mfuzz_Score),]
+    M3<- annotations[annotations$Mfuzz_R_Clust %in% c("R-3"),c(4,5,9,10)] 
+    M3[order(-M3$Mfuzz_R_Score),]
   },ignoreNULL= T)
   
   output$tableM3 <- renderDataTable({
@@ -142,8 +173,8 @@ server <- function(input, output, session){
   })
   
   M4 <- eventReactive(input$M4,{
-    M4 <- annotations[annotations$Mfuzz_Clust %in% 4,c(4,5,7,8)] 
-    M4[order(-M4$Mfuzz_Score),]
+    M4 <- annotations[annotations$Mfuzz_R_Clust %in% c("R-4"),c(4,5,9,10)] 
+    M4[order(-M4$Mfuzz_R_Score),]
   },ignoreNULL= T)
   
   output$tableM4 <- renderDataTable({
@@ -165,8 +196,8 @@ server <- function(input, output, session){
   })
   
   M5 <- eventReactive(input$M5,{
-    M5 <- annotations[annotations$Mfuzz_Clust %in% 5,c(4,5,7,8)] 
-    M5[order(-M5$Mfuzz_Score),]
+    M5 <- annotations[annotations$Mfuzz_R_Clust %in% c("R-5"),c(4,5,9,10)] 
+    M5[order(-M5$Mfuzz_R_Score),]
   },ignoreNULL= T)
   
   output$tableM5 <- renderDataTable({
@@ -188,8 +219,8 @@ server <- function(input, output, session){
   })
   
   M6 <- eventReactive(input$M6,{
-    M6 <- annotations[annotations$Mfuzz_Clust %in% 6,c(4,5,7,8)]
-    M6[order(-M6$Mfuzz_Score),]
+    M6 <- annotations[annotations$Mfuzz_R_Clust %in% c("R-6"),c(4,5,9,10)]
+    M6[order(-M6$Mfuzz_R_Score),]
   },ignoreNULL= T)
   
   output$tableM6 <- renderDataTable({
@@ -211,8 +242,8 @@ server <- function(input, output, session){
   })
   
   M7 <- eventReactive(input$M7,{
-    M7 <- annotations[annotations$Mfuzz_Clust %in% 7,c(4,5,7,8)]
-    M7[order(-M7$Mfuzz_Score),]
+    M7 <- annotations[annotations$Mfuzz_R_Clust %in% c("R-7"),c(4,5,9,10)]
+    M7[order(-M7$Mfuzz_R_Score),]
   },ignoreNULL= T)
   
   output$tableM7 <- renderDataTable({
@@ -233,8 +264,8 @@ server <- function(input, output, session){
   })
   
   M8 <- eventReactive(input$M8,{
-    M8 <- annotations[annotations$Mfuzz_Clust %in% 8,c(4,5,7,8)] 
-    M8[order(-M8$Mfuzz_Score),]
+    M8 <- annotations[annotations$Mfuzz_R_Clust %in% c("R-8"),c(4,5,9,10)] 
+    M8[order(-M8$Mfuzz_R_Score),]
   },ignoreNULL= T)
   
   output$tableM8 <- renderDataTable({
@@ -256,8 +287,8 @@ server <- function(input, output, session){
   })
   
   M9 <- eventReactive(input$M9,{
-    M9 <- annotations[annotations$Mfuzz_Clust %in% 9,c(4,5,7,8)]
-    M9[order(-M9$Mfuzz_Score),]
+    M9 <- annotations[annotations$Mfuzz_R_Clust %in% c("R-9"),c(4,5,9,10)]
+    M9[order(-M9$Mfuzz_R_Score),]
   },ignoreNULL= T)
   
   output$tableM9 <- renderDataTable({
@@ -279,8 +310,8 @@ server <- function(input, output, session){
   })
   
   M10 <- eventReactive(input$M10,{
-    M10 <- annotations[annotations$Mfuzz_Clust %in% 10,c(4,5,7,8)]
-    M10[order(-M10$Mfuzz_Score),]
+    M10 <- annotations[annotations$Mfuzz_R_Clust %in% c("R-10"),c(4,5,9,10)]
+    M10[order(-M10$Mfuzz_R_Score),]
   },ignoreNULL= T)
   
   output$tableM10 <- renderDataTable({
@@ -300,54 +331,204 @@ server <- function(input, output, session){
     updateTextInput(session, "gene4", value = row.names(M10())[m10clicked[4]])
     updateTextInput(session, "gene5", value = row.names(M10())[m10clicked[5]])
   })
+
+  #
+  #
+  # Embryonic Mfuzz
+  #
+  #
   
-  M11 <- eventReactive(input$M11,{
-    M11 <- annotations[annotations$Mfuzz_Clust %in% 11,c(4,5,7,8)]
-    M11[order(-M11$Mfuzz_Score),]
+  E1 <- eventReactive(input$E1,{
+    E1 <- annotations[annotations$Mfuzz_E_Clust %in% c("E-1"),c(6,7,9,10)] 
+    E1[order(-E1$Mfuzz_E_Score),]
   },ignoreNULL= T)
   
-  output$tableM11 <- renderDataTable({
-    M11()
+  output$tableE1 <- renderDataTable({
+    E1()
   })
   
-  observeEvent(input$M11, {
-    toggleModal(session, "m11", "open")
+  observeEvent(input$E1, {
+    toggleModal(session, "e1", "open")
   })
   
   #this code block updates the inputs if a row is clicked on the pop-up table
   observe({
-    m11clicked = input$tableM11_rows_selected
-    updateTextInput(session, "gene1", value = row.names(M11())[m11clicked[1]])
-    updateTextInput(session, "gene2", value = row.names(M11())[m11clicked[2]])
-    updateTextInput(session, "gene3", value = row.names(M11())[m11clicked[3]])
-    updateTextInput(session, "gene4", value = row.names(M11())[m11clicked[4]])
-    updateTextInput(session, "gene5", value = row.names(M11())[m11clicked[5]])
+    e1clicked = input$tableE1_rows_selected
+    updateTextInput(session, "gene1", value = row.names(E1())[e1clicked[1]])
+    updateTextInput(session, "gene2", value = row.names(E1())[e1clicked[2]])
+    updateTextInput(session, "gene3", value = row.names(E1())[e1clicked[3]])
+    updateTextInput(session, "gene4", value = row.names(E1())[e1clicked[4]])
+    updateTextInput(session, "gene5", value = row.names(E1())[e1clicked[5]])
   })
   
-  M12 <- eventReactive(input$M12,{
-    M12 <- annotations[annotations$Mfuzz_Clust %in% 12,c(4,5,7,8)] 
-    M12[order(-M12$Mfuzz_Score),]
+  E2 <- eventReactive(input$E2,{
+    E2 <- annotations[annotations$Mfuzz_E_Clust %in% c("E-2"),c(6,7,9,10)] 
+    E2[order(-E2$Mfuzz_E_Score),]
   },ignoreNULL= T)
   
-  output$tableM12 <- renderDataTable({
-    M12()
+  output$tableE2 <- renderDataTable({
+    E2()
   })
   
-  observeEvent(input$M12, {
-    toggleModal(session, "m12", "open")
+  observeEvent(input$E2, {
+    toggleModal(session, "e2", "open")
   })
   
   #this code block updates the inputs if a row is clicked on the pop-up table
   observe({
-    m12clicked = input$tableM12_rows_selected
-    updateTextInput(session, "gene1", value = row.names(M12())[m12clicked[1]])
-    updateTextInput(session, "gene2", value = row.names(M12())[m12clicked[2]])
-    updateTextInput(session, "gene3", value = row.names(M12())[m12clicked[3]])
-    updateTextInput(session, "gene4", value = row.names(M12())[m12clicked[4]])
-    updateTextInput(session, "gene5", value = row.names(M12())[m12clicked[5]])
+    e2clicked = input$tableE2_rows_selected
+    updateTextInput(session, "gene1", value = row.names(E2())[e2clicked[1]])
+    updateTextInput(session, "gene2", value = row.names(E2())[e2clicked[2]])
+    updateTextInput(session, "gene3", value = row.names(E2())[e2clicked[3]])
+    updateTextInput(session, "gene4", value = row.names(E2())[e2clicked[4]])
+    updateTextInput(session, "gene5", value = row.names(E2())[e2clicked[5]])
   })
   
+  E3 <- eventReactive(input$E3,{
+    E3<- annotations[annotations$Mfuzz_E_Clust %in% c("E-3"),c(6,7,9,10)] 
+    E3[order(-E3$Mfuzz_E_Score),]
+  },ignoreNULL= T)
+  
+  output$tableE3 <- renderDataTable({
+    E3()
+  })
+  
+  observeEvent(input$E3, {
+    toggleModal(session, "e3", "open")
+  })
+  
+  #this code block updates the inputs if a row is clicked on the pop-up table
+  observe({
+    e3clicked = input$tableM3_rows_selected
+    updateTextInput(session, "gene1", value = row.names(E3())[e3clicked[1]])
+    updateTextInput(session, "gene2", value = row.names(E3())[e3clicked[2]])
+    updateTextInput(session, "gene3", value = row.names(E3())[e3clicked[3]])
+    updateTextInput(session, "gene4", value = row.names(E3())[e3clicked[4]])
+    updateTextInput(session, "gene5", value = row.names(E3())[e3clicked[5]])
+  })
+  
+  E4 <- eventReactive(input$E4,{
+    E4 <- annotations[annotations$Mfuzz_E_Clust %in% c("E-4"),c(6,7,9,10)] 
+    E4[order(-E4$Mfuzz_E_Score),]
+  },ignoreNULL= T)
+  
+  output$tableE4 <- renderDataTable({
+    E4()
+  })
+  
+  observeEvent(input$E4, {
+    toggleModal(session, "e4", "open")
+  })
+  
+  #this code block updates the inputs if a row is clicked on the pop-up table
+  observe({
+    e4clicked = input$tableE4_rows_selected
+    updateTextInput(session, "gene1", value = row.names(E4())[e4clicked[1]])
+    updateTextInput(session, "gene2", value = row.names(E4())[e4clicked[2]])
+    updateTextInput(session, "gene3", value = row.names(E4())[e4clicked[3]])
+    updateTextInput(session, "gene4", value = row.names(E4())[e4clicked[4]])
+    updateTextInput(session, "gene5", value = row.names(E4())[e4clicked[5]])
+  })
+  
+  E5 <- eventReactive(input$E5,{
+    E5 <- annotations[annotations$Mfuzz_E_Clust %in% c("E-5"),c(6,7,9,10)] 
+    E5[order(-E5$Mfuzz_E_Score),]
+  },ignoreNULL= T)
+  
+  output$tableE5 <- renderDataTable({
+    E5()
+  })
+  
+  observeEvent(input$E5, {
+    toggleModal(session, "e5", "open")
+  })
+  
+  #this code block updates the inputs if a row is clicked on the pop-up table
+  observe({
+    e5clicked = input$tableE5_rows_selected
+    updateTextInput(session, "gene1", value = row.names(E5())[e5clicked[1]])
+    updateTextInput(session, "gene2", value = row.names(E5())[e5clicked[2]])
+    updateTextInput(session, "gene3", value = row.names(E5())[e5clicked[3]])
+    updateTextInput(session, "gene4", value = row.names(E5())[e5clicked[4]])
+    updateTextInput(session, "gene5", value = row.names(E5())[e5clicked[5]])
+  })
+  
+  E6 <- eventReactive(input$E6,{
+    E6 <- annotations[annotations$Mfuzz_E_Clust %in% c("E-6"),c(6,7,9,10)]
+    E6[order(-E6$Mfuzz_E_Score),]
+  },ignoreNULL= T)
+  
+  output$tableE6 <- renderDataTable({
+    E6()
+  })
+  
+  observeEvent(input$E6, {
+    toggleModal(session, "e6", "open")
+  })
+  
+  #this code block updates the inputs if a row is clicked on the pop-up table
+  observe({
+    e6clicked = input$tableE6_rows_selected
+    updateTextInput(session, "gene1", value = row.names(E6())[e6clicked[1]])
+    updateTextInput(session, "gene2", value = row.names(E6())[e6clicked[2]])
+    updateTextInput(session, "gene3", value = row.names(E6())[e6clicked[3]])
+    updateTextInput(session, "gene4", value = row.names(E6())[e6clicked[4]])
+    updateTextInput(session, "gene5", value = row.names(E6())[e6clicked[5]])
+  })
+  
+  E7 <- eventReactive(input$E7,{
+    E7 <- annotations[annotations$Mfuzz_E_Clust %in% c("E-7"),c(6,7,9,10)]
+    E7[order(-E7$Mfuzz_E_Score),]
+  },ignoreNULL= T)
+  
+  output$tableE7 <- renderDataTable({
+    E7()
+  })
+  
+  observeEvent(input$E7, {
+    toggleModal(session, "e7", "open")
+  })
+  #this code block updates the inputs if a row is clicked on the pop-up table
+  observe({
+    e7clicked = input$tableE7_rows_selected
+    updateTextInput(session, "gene1", value = row.names(E7())[e7clicked[1]])
+    updateTextInput(session, "gene2", value = row.names(E7())[e7clicked[2]])
+    updateTextInput(session, "gene3", value = row.names(E7())[e7clicked[3]])
+    updateTextInput(session, "gene4", value = row.names(E7())[e7clicked[4]])
+    updateTextInput(session, "gene5", value = row.names(E7())[e7clicked[5]])
+  })
+  
+  E8 <- eventReactive(input$E8,{
+    E8 <- annotations[annotations$Mfuzz_E_Clust %in% c("E-8"),c(6,7,9,10)] 
+    E8[order(-E8$Mfuzz_E_Score),]
+  },ignoreNULL= T)
+  
+  output$tableE8 <- renderDataTable({
+    E8()
+  })
+  
+  observeEvent(input$E8, {
+    toggleModal(session, "e8", "open")
+  })
+  
+  #this code block updates the inputs if a row is clicked on the pop-up table
+  observe({
+    e8clicked = input$tableE8_rows_selected
+    updateTextInput(session, "gene1", value = row.names(E8())[e8clicked[1]])
+    updateTextInput(session, "gene2", value = row.names(E8())[e8clicked[2]])
+    updateTextInput(session, "gene3", value = row.names(E8())[e8clicked[3]])
+    updateTextInput(session, "gene4", value = row.names(E8())[e8clicked[4]])
+    updateTextInput(session, "gene5", value = row.names(E8())[e8clicked[5]])
+  })
+  #
+  #
+  #
+  #
+  #
   #End of Mfuzz inputs
+  #
+  #
+  #
   
   observe({
     query <- parseQueryString(session$clientData$url_search)
@@ -449,6 +630,10 @@ server <- function(input, output, session){
   Egenex <- reactive({
     Egene1()[c(2:4, 6:10, 12:15,17:20, 22:28,34:40)]
   })
+  #same workflow, subsetting the SE values
+  EgeneSE <- reactive({
+    EmbryoSE[c(nve1()),]
+  })
   
   genet <- reactive({
     melt(gene1())
@@ -467,21 +652,33 @@ server <- function(input, output, session){
   Et <- reactive({
     melt(E())
   })
+  ERSE <- reactive({
+    ERSEx <- EgeneSE()[c(1:8,35)]
+    melt(ERSEx)
+  })
+  
   Fisch <- reactive({
     Egene1()[c(9:28,40)]
   })
   Ft <- reactive({
     melt(Fisch())
   })
+  FSE <- reactive({
+    FSEx <- EgeneSE()[c(9:28,35)]
+    melt(FSEx)
+  })
+  
+  
   H <- reactive({
     Egene1()[c(29:34,40)]
   })
   Ht <- reactive({
     melt(H())
   })
-  
-  # this uses the SE values to make the error bar limits
-  limits <- reactive(aes(ymax = genet()$value + genetSE()$value, ymin=genet()$value - genetSE()$value)) # This is the calculation for the error bars
+  HSE <- reactive({
+    HSEx <- EgeneSE()[c(29:34,35)]
+    melt(HSEx)
+  })
   
   #first we output the table.  It looks nicer in the long format, hence the 't' for transpose
   #tables are reordered with Id first when printed : last column first then column from 1 to last-1
@@ -530,14 +727,14 @@ server <- function(input, output, session){
               selection = 'none',
               options = list(dom = 'ft', 
                 columnDefs = list(
-                  list(visible = FALSE, targets = c(0,10)),
+                  list(visible = FALSE, targets = c(0,12)),
                   list(orderable = FALSE, className = 'details-control', targets = 1)
                 )
               ),
               callback = JS("table.column(1).nodes().to$().css({cursor: 'pointer'});
                 var format = function(d) {
                   return '<div style=\"background-color:#eee; padding: .5em;\"> Extra Hits: ' +
-                  d[10] + '</div>';
+                  d[12] + '</div>';
                   };
                 table.on('click', 'td.details-control', function() {
                   var td = $(this), row = table.row(td.closest('tr'));
@@ -608,6 +805,17 @@ server <- function(input, output, session){
   })
   ###
   
+  
+  ##
+  ## Plots
+  ##
+  ##
+  
+  # this uses the SE values to make the error bar limits
+  limits <- reactive(aes(ymax = genet()$value + genetSE()$value, ymin=genet()$value - genetSE()$value)) # This is the calculation for the error bars
+  #for whatever reason I couldnt do the same for the embryonic. I had to explicitly map them in the Geom_errorbar() below
+  
+  
   #now we output the plot.  
   #this is the regen:
   p <- reactive({
@@ -618,10 +826,48 @@ server <- function(input, output, session){
             axis.title.y = element_text(colour="grey20",size=12,angle=90,hjust=.5,vjust=.5,face="plain"))
     
   })
+  r <- reactive({
+    ggplot(genet(), aes(x=as.numeric(as.character(genet()$variable)), y=value, colour=ID)) + geom_line() +
+      geom_emoji(emoji="1f363") +
+      theme(axis.text.x = element_text(colour="grey20",size=12,angle=0,hjust=.5,vjust=.5,face="plain"),
+            axis.text.y = element_text(colour="grey20",size=12,angle=0,hjust=1,vjust=0,face="plain"),  
+            axis.title.x = element_text(colour="grey20",size=12,angle=0,hjust=.5,vjust=0,face="plain"),
+            axis.title.y = element_text(colour="grey20",size=12,angle=90,hjust=.5,vjust=.5,face="plain"))
+  })
+  s <- reactive({
+    ggplot(genet(), aes(x=as.numeric(as.character(genet()$variable)), y=value, colour=ID)) + geom_line() +
+      geom_emoji(emoji="1f431") +
+    theme(axis.text.x = element_text(colour="grey20",size=12,angle=0,hjust=.5,vjust=.5,face="plain"),
+          axis.text.y = element_text(colour="grey20",size=12,angle=0,hjust=1,vjust=0,face="plain"),  
+          axis.title.x = element_text(colour="grey20",size=12,angle=0,hjust=.5,vjust=0,face="plain"),
+          axis.title.y = element_text(colour="grey20",size=12,angle=90,hjust=.5,vjust=.5,face="plain"))
+  })
+  t <- reactive({
+    ggplot(genet(), aes(x=as.numeric(as.character(genet()$variable)), y=value, colour=ID)) + geom_line() +
+      geom_emoji(emoji="1f419") +
+    theme(axis.text.x = element_text(colour="grey20",size=12,angle=0,hjust=.5,vjust=.5,face="plain"),
+          axis.text.y = element_text(colour="grey20",size=12,angle=0,hjust=1,vjust=0,face="plain"),  
+          axis.title.x = element_text(colour="grey20",size=12,angle=0,hjust=.5,vjust=0,face="plain"),
+          axis.title.y = element_text(colour="grey20",size=12,angle=90,hjust=.5,vjust=.5,face="plain"))
+  })
+  
+  rplot <- reactive({
+    emog <- sample(c(1:100), 1, replace = FALSE, prob = NULL)
+    if (emog %in% c(1)){
+      return(r())
+    } else if (emog %in% c(2)){
+      return(s())
+    } else if (emog %in% c(3)){
+      return(t())
+    } else {
+      return(p())
+    }
+  })
+  
   
   output$plot1 <- renderPlot({ 
     #to get the graph to show up in shiny you need to print 
-    print(p()+ scale_x_continuous(minor_breaks = NULL, breaks=c(0,2,4,8,12,16,20,24,36,48,60,72,96,120,144)) +
+    print(rplot()+ scale_x_continuous(minor_breaks = NULL, breaks=c(0,2,4,8,12,16,20,24,36,48,60,72,96,120,144)) +
             geom_errorbar(limits(), width=0.2) +
             ylab(y_label()) +
             xlab("Hours Post Amputation"))  
@@ -654,6 +900,9 @@ server <- function(input, output, session){
   output$plot2 <- renderPlot({ 
     #to get the graph to show up in shiny you need to print 
     print(q()+ scale_x_continuous(minor_breaks = NULL, breaks=c(0,6,12,24,48,72,96,120,144,168,192,120,240)) +
+            geom_errorbar(data = Et(), aes(x=as.numeric(as.character(Et()$variable)), y=value, ymax = Et()$value + ERSE()$value, ymin=Et()$value - ERSE()$value, width=0.2)) +
+            geom_errorbar(data = Ft(), aes(x=as.numeric(as.character(Ft()$variable)), y=value, ymax = Ft()$value + FSE()$value, ymin=Ft()$value - FSE()$value, width=0.2)) +
+            geom_errorbar(data = Ht(), aes(x=as.numeric(as.character(Ht()$variable)), y=value, ymax = Ht()$value + HSE()$value, ymin=Ht()$value - HSE()$value, width=0.2)) +
             ylab("Log2 CPM") +
             xlab("Hours Post Fertilization"))  
   })
