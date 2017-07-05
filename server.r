@@ -145,7 +145,7 @@ server <- function(input, output, session){
   
   M3 <- eventReactive(input$M3,{
     M3 <- dbGetQuery(con, "select * from ER_plotter_annotation where Mfuzz_R_Clust in ('R-3')")
-    row.names(M1) <- M3$nvertx_id
+    row.names(M3) <- M3$nvertx_id
     M3 <- M3[,c(4,5,9,10)]
     M3[order(-M3$Mfuzz_R_Score),]
   },ignoreNULL= T)
