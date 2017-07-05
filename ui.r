@@ -1,3 +1,4 @@
+options(shiny.sanitize.errors = FALSE)
 library(ggplot2)
 library(reshape2)
 library(plyr)
@@ -48,6 +49,7 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
                              )
                   ),
                 headerPanel('NvERTx Embryo-Regen Plotter'),
+                h2( "Now running on SQLite! =) "),
                 sidebarPanel(
                   tags$head(tags$script(HTML(jscode))),
                   h5("Search for a gene"),
@@ -91,7 +93,7 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
                     sliderInput(inputId="w", label = "width:", min=3, max=20, value=12, width=100, ticks=F),
                     sliderInput(inputId="h", label = "height:", min=3, max=20, value=6, width=100, ticks=F),
                     br(),
-                    downloadButton('downloadPlot', 'Download Plot')
+                    downloadButton('downloadRegenPlot', 'Download Plot')
                   ),
                   checkboxInput('returnpdf2', 'Output Embryo pdf?', FALSE),
                   conditionalPanel(
@@ -112,32 +114,32 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
                 ),
                 
                 mainPanel(
-                  bsModal("modal", "Search Results", "", size = "large", DT::dataTableOutput('tableA')),
+                  bsModal("modal", "Search Results", "", size = "large", DT::dataTableOutput('searchTable')),
                   bsModal("converted", "Conversion Results", "", size = "large", DT::dataTableOutput('conversionTable'))
                 ),
                 mainPanel(
                   tabsetPanel(type = "tabs", 
                               tabPanel("Regeneration Clusters",
                                        actionButton("M1", img(src="MfuzzR-1.png", height = 125, width = 125)),
-                                       bsModal("m1", "Mfuzz1", "", size = "large", img(src="MfuzzR-1.png", height = 350, width = 350),h4("Biological process GO enrichment:"),img(src="1-BP-plot-2.png", height = 450, width = 600),dataTableOutput('tableM1')),
+                                       bsModal("m1", "Mfuzz1", "", size = "large", img(src="MfuzzR-1.png", height = 350, width = 350),h4("Biological process GO enrichment:"),img(src="BP-R-c1-plot.png", height = 450, width = 600),dataTableOutput('tableM1')),
                                        actionButton("M2", img(src="MfuzzR-2.png", height = 125, width = 125)),
-                                       bsModal("m2", "Mfuzz2", "", size = "large", img(src="MfuzzR-2.png", height = 350, width = 350),h4("Biological process GO enrichment:"),img(src="2-BP-plot-2.png", height = 450, width = 600),dataTableOutput('tableM2')),
+                                       bsModal("m2", "Mfuzz2", "", size = "large", img(src="MfuzzR-2.png", height = 350, width = 350),h4("Biological process GO enrichment:"),img(src="BP-R-c2-plot.png", height = 450, width = 600),dataTableOutput('tableM2')),
                                        actionButton("M3", img(src="MfuzzR-3.png", height = 125, width = 125)),
-                                       bsModal("m3", "Mfuzz3", "", size = "large", img(src="MfuzzR-3.png", height = 350, width = 350),h4("Biological process GO enrichment:"),img(src="3-BP-plot-2.png", height = 450, width = 600),dataTableOutput('tableM3')),
+                                       bsModal("m3", "Mfuzz3", "", size = "large", img(src="MfuzzR-3.png", height = 350, width = 350),h4("Biological process GO enrichment:"),img(src="BP-R-c3-plot.png", height = 450, width = 600),dataTableOutput('tableM3')),
                                        actionButton("M4", img(src="MfuzzR-4.png", height = 125, width = 125)),
-                                       bsModal("m4", "Mfuzz4", "", size = "large", img(src="MfuzzR-4.png", height = 350, width = 350),h4("Biological process GO enrichment:"),img(src="4-BP-plot-2.png", height = 450, width = 600),dataTableOutput('tableM4')),
+                                       bsModal("m4", "Mfuzz4", "", size = "large", img(src="MfuzzR-4.png", height = 350, width = 350),h4("Biological process GO enrichment:"),img(src="BP-R-c4-plot.png", height = 450, width = 600),dataTableOutput('tableM4')),
                                        actionButton("M5", img(src="MfuzzR-5.png", height = 125, width = 125)),
-                                       bsModal("m5", "Mfuzz5", "", size = "large", img(src="MfuzzR-5.png", height = 350, width = 350),h4("Biological process GO enrichment:"),img(src="5-BP-plot-2.png", height = 450, width = 600),dataTableOutput('tableM5')),
+                                       bsModal("m5", "Mfuzz5", "", size = "large", img(src="MfuzzR-5.png", height = 350, width = 350),h4("Biological process GO enrichment:"),img(src="BP-R-c5-plot.png", height = 450, width = 600),dataTableOutput('tableM5')),
                                        actionButton("M6", img(src="MfuzzR-6.png", height = 125, width = 125)),
-                                       bsModal("m6", "Mfuzz6", "", size = "large", img(src="MfuzzR-6.png", height = 350, width = 350),h4("Biological process GO enrichment:"),img(src="6-BP-plot-2.png", height = 450, width = 600),dataTableOutput('tableM6')),
+                                       bsModal("m6", "Mfuzz6", "", size = "large", img(src="MfuzzR-6.png", height = 350, width = 350),h4("Biological process GO enrichment:"),img(src="BP-R-c6-plot.png", height = 450, width = 600),dataTableOutput('tableM6')),
                                        actionButton("M7", img(src="MfuzzR-7.png", height = 125, width = 125)),
-                                       bsModal("m7", "Mfuzz7", "", size = "large", img(src="MfuzzR-7.png", height = 350, width = 350),h4("Biological process GO enrichment:"),img(src="7-BP-plot-2.png", height = 450, width = 600),dataTableOutput('tableM7')),
+                                       bsModal("m7", "Mfuzz7", "", size = "large", img(src="MfuzzR-7.png", height = 350, width = 350),h4("Biological process GO enrichment:"),img(src="BP-R-c7-plot.png", height = 450, width = 600),dataTableOutput('tableM7')),
                                        actionButton("M8", img(src="MfuzzR-8.png", height = 125, width = 125)),
-                                       bsModal("m8", "Mfuzz8", "", size = "large", img(src="MfuzzR-8.png", height = 350, width = 350),h4("Biological process GO enrichment:"),img(src="8-BP-plot-2.png", height = 450, width = 600),dataTableOutput('tableM8')),
+                                       bsModal("m8", "Mfuzz8", "", size = "large", img(src="MfuzzR-8.png", height = 350, width = 350),h4("Biological process GO enrichment:"),img(src="BP-R-c8-plot.png", height = 450, width = 600),dataTableOutput('tableM8')),
                                        actionButton("M9", img(src="MfuzzR-9.png", height = 125, width = 125)),
-                                       bsModal("m9", "Mfuzz9", "", size = "large", img(src="MfuzzR-9.png", height = 350, width = 350),h4("Biological process GO enrichment:"),img(src="9-BP-plot-2.png", height = 450, width = 600),dataTableOutput('tableM9')),
-                                       actionButton("M10", img(src="MfuzzR-10.png", height = 125, width = 125)),
-                                       bsModal("m10", "Mfuzz10", "", size = "large", img(src="MfuzzR-10.png", height = 350, width = 350),h4("Biological process GO enrichment:"),img(src="10-BP-plot-2.png", height = 450, width = 600),dataTableOutput('tableM10'))
+                                       bsModal("m9", "Mfuzz9", "", size = "large", img(src="MfuzzR-9.png", height = 350, width = 350),h4("Biological process GO enrichment:"),img(src="BP-R-c9-plot.png", height = 450, width = 600),dataTableOutput('tableM9'))
+                                       #actionButton("M10", img(src="MfuzzR-10.png", height = 125, width = 125)),
+                                       #bsModal("m10", "Mfuzz10", "", size = "large", img(src="MfuzzR-10.png", height = 350, width = 350),h4("Biological process GO enrichment:"),img(src="10-BP-plot-2.png", height = 450, width = 600),dataTableOutput('tableM10'))
                                       ),
                               tabPanel("Embryonic Clusters",
                                        actionButton("E1", img(src="MfuzzE-1.png", height = 125, width = 125)),
@@ -158,8 +160,31 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
                                        bsModal("e8", "Mfuzz8", "", size = "large", img(src="MfuzzE-8.png", height = 350, width = 350),h4("Biological process GO enrichment:"),img(src="8-BP-plot-2.png", height = 450, width = 600),dataTableOutput('tableE8'))
                                        ),
                               tabPanel("Blast",
-                                       p("Make sure the lab computer is awake..."),
-                                       tags$iframe(src="http://134.59.51.195:4567/", height=600, width=1000)
+                                       #This block gives us all the inputs:
+                                       mainPanel(
+                                         p("This only works locally for now...",style="color:red"),
+                                         p("Click 'BLAST!' to see a sample result.",style="color:red"),
+                                         textAreaInput('query', 'Input sequence:', value = "", placeholder = "", width = "600px", height="200px"),
+                                         selectInput("db", "Databse:", choices=c("NvERTx.4","nr"), width="120px"),
+                                         div(style="display:inline-block",
+                                             selectInput("program", "Program:", choices=c("blastn","tblastn"), width="100px")),
+                                         div(style="display:inline-block",
+                                             selectInput("eval", "e-value:", choices=c(1,0.001,1e-4,1e-5,1e-10), width="120px")),
+                                         actionButton("blast", "BLAST!")
+                                       ),
+                                       #Basic results output
+                                       mainPanel(
+                                         h4("Blast Results"),
+                                         DT::dataTableOutput("blastResults"),
+                                         p("Alignment:", tableOutput("clicked") ),
+                                         verbatimTextOutput("alignment")
+                                       )
+                              ),
+                              tabPanel("About",
+                                       mainPanel(
+                                         h4("About this site:"),
+                                         p("Blah-Blah-Blah-Blah-Blah-Blah-Blah-Blah-")
+                                       )
                               )
                   )),
                 mainPanel(
