@@ -93,7 +93,7 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
                     sliderInput(inputId="w", label = "width:", min=3, max=20, value=12, width=100, ticks=F),
                     sliderInput(inputId="h", label = "height:", min=3, max=20, value=6, width=100, ticks=F),
                     br(),
-                    downloadButton('downloadRegenPlot', 'Download Plot')
+                    downloadButton('downloadPlot', 'Download Plot')
                   ),
                   checkboxInput('returnpdf2', 'Output Embryo pdf?', FALSE),
                   conditionalPanel(
