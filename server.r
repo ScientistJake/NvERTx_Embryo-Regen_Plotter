@@ -29,6 +29,7 @@ server <- function(input, output, session){
   },ignoreNULL= T)
   
   output$searchTable = renderDataTable({
+    req(searchTerm())
     search <- dbGetQuery(con, paste0("select * from ER_plotter_annotation where ((Nemve1_tophit LIKE ",paste("'%",as.character(searchTerm()),"%'",sep=""),") OR (Uniprot_ID LIKE ",paste("'%",as.character(searchTerm()),"%'",collapse=", ",sep=""),") OR (Top_nr_hit_eval LIKE ",paste("'%",as.character(searchTerm()),"%'",collapse=", ",sep=""),") OR (Uniprot_Description LIKE ",paste("'%",as.character(searchTerm()),"%'",collapse=", ",sep=""),"))"))
     NvERtx_ID <- search$nvertx_id
     search <- search[c(2,9,10,11)]
@@ -60,7 +61,7 @@ server <- function(input, output, session){
   })
   
   #this code block updates the inputs if a row is clicked on the pop-up table
-  observe({
+  observeEvent(input$go, {
     search <- dbGetQuery(con, paste0("select * from ER_plotter_annotation where ((Nemve1_tophit LIKE ",paste("'%",as.character(searchTerm()),"%'",sep=""),") OR (Uniprot_ID LIKE ",paste("'%",as.character(searchTerm()),"%'",collapse=", ",sep=""),") OR (Top_nr_hit_eval LIKE ",paste("'%",as.character(searchTerm()),"%'",collapse=", ",sep=""),") OR (Uniprot_Description LIKE ",paste("'%",as.character(searchTerm()),"%'",collapse=", ",sep=""),"))"))
     NvERtx_ID <- search$nvertx_id
     search <- search[c(2,9,10,11)]
@@ -101,6 +102,7 @@ server <- function(input, output, session){
   },ignoreNULL= T)
   
   output$tableM1 <- renderDataTable({
+    req(M1())
     M1()
   })
   
@@ -110,6 +112,7 @@ server <- function(input, output, session){
   
   #this code block updates the inputs if a row is clicked on the pop-up table
   observe({
+    req(M1())
     m1clicked = input$tableM1_rows_selected
     updateTextInput(session, "gene1", value = row.names(M1())[m1clicked[1]])
     updateTextInput(session, "gene2", value = row.names(M1())[m1clicked[2]])
@@ -126,6 +129,7 @@ server <- function(input, output, session){
   },ignoreNULL= T)
   
   output$tableM2 <- renderDataTable({
+    req(M2())
     M2()
   })
   
@@ -135,6 +139,7 @@ server <- function(input, output, session){
   
   #this code block updates the inputs if a row is clicked on the pop-up table
   observe({
+    req(M2())
     m2clicked = input$tableM2_rows_selected
     updateTextInput(session, "gene1", value = row.names(M2())[m2clicked[1]])
     updateTextInput(session, "gene2", value = row.names(M2())[m2clicked[2]])
@@ -151,6 +156,7 @@ server <- function(input, output, session){
   },ignoreNULL= T)
   
   output$tableM3 <- renderDataTable({
+    req(M3())
     M3()
   })
   
@@ -160,6 +166,7 @@ server <- function(input, output, session){
   
   #this code block updates the inputs if a row is clicked on the pop-up table
   observe({
+    req(M3())
     m3clicked = input$tableM3_rows_selected
     updateTextInput(session, "gene1", value = row.names(M3())[m3clicked[1]])
     updateTextInput(session, "gene2", value = row.names(M3())[m3clicked[2]])
@@ -176,6 +183,7 @@ server <- function(input, output, session){
   },ignoreNULL= T)
   
   output$tableM4 <- renderDataTable({
+    req(M4())
     M4()
   })
   
@@ -185,6 +193,7 @@ server <- function(input, output, session){
   
   #this code block updates the inputs if a row is clicked on the pop-up table
   observe({
+    req(M4())
     m4clicked = input$tableM4_rows_selected
     updateTextInput(session, "gene1", value = row.names(M4())[m4clicked[1]])
     updateTextInput(session, "gene2", value = row.names(M4())[m4clicked[2]])
@@ -201,6 +210,7 @@ server <- function(input, output, session){
   },ignoreNULL= T)
   
   output$tableM5 <- renderDataTable({
+    req(M5())
     M5()
   })
   
@@ -210,6 +220,7 @@ server <- function(input, output, session){
   
   #this code block updates the inputs if a row is clicked on the pop-up table
   observe({
+    req(M5())
     m5clicked = input$tableM5_rows_selected
     updateTextInput(session, "gene1", value = row.names(M5())[m5clicked[1]])
     updateTextInput(session, "gene2", value = row.names(M5())[m5clicked[2]])
@@ -226,6 +237,7 @@ server <- function(input, output, session){
   },ignoreNULL= T)
   
   output$tableM6 <- renderDataTable({
+    req(M6())
     M6()
   })
   
@@ -235,6 +247,7 @@ server <- function(input, output, session){
   
   #this code block updates the inputs if a row is clicked on the pop-up table
   observe({
+    req(M6())
     m6clicked = input$tableM6_rows_selected
     updateTextInput(session, "gene1", value = row.names(M6())[m6clicked[1]])
     updateTextInput(session, "gene2", value = row.names(M6())[m6clicked[2]])
@@ -251,6 +264,7 @@ server <- function(input, output, session){
   },ignoreNULL= T)
   
   output$tableM7 <- renderDataTable({
+    req(M7())
     M7()
   })
   
@@ -259,6 +273,7 @@ server <- function(input, output, session){
   })
   #this code block updates the inputs if a row is clicked on the pop-up table
   observe({
+    req(M7())
     m7clicked = input$tableM7_rows_selected
     updateTextInput(session, "gene1", value = row.names(M7())[m7clicked[1]])
     updateTextInput(session, "gene2", value = row.names(M7())[m7clicked[2]])
@@ -275,6 +290,7 @@ server <- function(input, output, session){
   },ignoreNULL= T)
   
   output$tableM8 <- renderDataTable({
+    req(M8())
     M8()
   })
   
@@ -284,6 +300,7 @@ server <- function(input, output, session){
   
   #this code block updates the inputs if a row is clicked on the pop-up table
   observe({
+    req(M8())
     m8clicked = input$tableM8_rows_selected
     updateTextInput(session, "gene1", value = row.names(M8())[m8clicked[1]])
     updateTextInput(session, "gene2", value = row.names(M8())[m8clicked[2]])
@@ -300,6 +317,7 @@ server <- function(input, output, session){
   },ignoreNULL= T)
   
   output$tableM9 <- renderDataTable({
+    req(M9())
     M9()
   })
   
@@ -309,6 +327,7 @@ server <- function(input, output, session){
   
   #this code block updates the inputs if a row is clicked on the pop-up table
   observe({
+    req(M9())
     m9clicked = input$tableM9_rows_selected
     updateTextInput(session, "gene1", value = row.names(M9())[m9clicked[1]])
     updateTextInput(session, "gene2", value = row.names(M9())[m9clicked[2]])
@@ -356,6 +375,7 @@ server <- function(input, output, session){
   },ignoreNULL= T)
   
   output$tableE1 <- renderDataTable({
+    req(E1())
     E1()
   })
   
@@ -365,6 +385,7 @@ server <- function(input, output, session){
   
   #this code block updates the inputs if a row is clicked on the pop-up table
   observe({
+    req(E1())
     e1clicked = input$tableE1_rows_selected
     updateTextInput(session, "gene1", value = row.names(E1())[e1clicked[1]])
     updateTextInput(session, "gene2", value = row.names(E1())[e1clicked[2]])
@@ -381,6 +402,7 @@ server <- function(input, output, session){
   },ignoreNULL= T)
   
   output$tableE2 <- renderDataTable({
+    req(E2())
     E2()
   })
   
@@ -390,6 +412,7 @@ server <- function(input, output, session){
   
   #this code block updates the inputs if a row is clicked on the pop-up table
   observe({
+    req(E2())
     e2clicked = input$tableE2_rows_selected
     updateTextInput(session, "gene1", value = row.names(E2())[e2clicked[1]])
     updateTextInput(session, "gene2", value = row.names(E2())[e2clicked[2]])
@@ -406,6 +429,7 @@ server <- function(input, output, session){
   },ignoreNULL= T)
   
   output$tableE3 <- renderDataTable({
+    req(E3())
     E3()
   })
   
@@ -415,7 +439,8 @@ server <- function(input, output, session){
   
   #this code block updates the inputs if a row is clicked on the pop-up table
   observe({
-    e3clicked = input$tableM3_rows_selected
+    req(E3())
+    e3clicked = input$tableE3_rows_selected
     updateTextInput(session, "gene1", value = row.names(E3())[e3clicked[1]])
     updateTextInput(session, "gene2", value = row.names(E3())[e3clicked[2]])
     updateTextInput(session, "gene3", value = row.names(E3())[e3clicked[3]])
@@ -431,6 +456,7 @@ server <- function(input, output, session){
   },ignoreNULL= T)
   
   output$tableE4 <- renderDataTable({
+    req(E4())
     E4()
   })
   
@@ -440,6 +466,7 @@ server <- function(input, output, session){
   
   #this code block updates the inputs if a row is clicked on the pop-up table
   observe({
+    req(E4())
     e4clicked = input$tableE4_rows_selected
     updateTextInput(session, "gene1", value = row.names(E4())[e4clicked[1]])
     updateTextInput(session, "gene2", value = row.names(E4())[e4clicked[2]])
@@ -456,6 +483,7 @@ server <- function(input, output, session){
   },ignoreNULL= T)
   
   output$tableE5 <- renderDataTable({
+    req(E5())
     E5()
   })
   
@@ -465,6 +493,7 @@ server <- function(input, output, session){
   
   #this code block updates the inputs if a row is clicked on the pop-up table
   observe({
+    req(E5())
     e5clicked = input$tableE5_rows_selected
     updateTextInput(session, "gene1", value = row.names(E5())[e5clicked[1]])
     updateTextInput(session, "gene2", value = row.names(E5())[e5clicked[2]])
@@ -481,6 +510,7 @@ server <- function(input, output, session){
   },ignoreNULL= T)
   
   output$tableE6 <- renderDataTable({
+    req(E6())
     E6()
   })
   
@@ -490,6 +520,7 @@ server <- function(input, output, session){
   
   #this code block updates the inputs if a row is clicked on the pop-up table
   observe({
+    req(E6())
     e6clicked = input$tableE6_rows_selected
     updateTextInput(session, "gene1", value = row.names(E6())[e6clicked[1]])
     updateTextInput(session, "gene2", value = row.names(E6())[e6clicked[2]])
@@ -506,6 +537,7 @@ server <- function(input, output, session){
   },ignoreNULL= T)
   
   output$tableE7 <- renderDataTable({
+    req(E7())
     E7()
   })
   
@@ -514,6 +546,7 @@ server <- function(input, output, session){
   })
   #this code block updates the inputs if a row is clicked on the pop-up table
   observe({
+    req(E7())
     e7clicked = input$tableE7_rows_selected
     updateTextInput(session, "gene1", value = row.names(E7())[e7clicked[1]])
     updateTextInput(session, "gene2", value = row.names(E7())[e7clicked[2]])
@@ -530,6 +563,7 @@ server <- function(input, output, session){
   },ignoreNULL= T)
   
   output$tableE8 <- renderDataTable({
+    req(E8())
     E8()
   })
   
@@ -539,6 +573,7 @@ server <- function(input, output, session){
   
   #this code block updates the inputs if a row is clicked on the pop-up table
   observe({
+    req(E8())
     e8clicked = input$tableE8_rows_selected
     updateTextInput(session, "gene1", value = row.names(E8())[e8clicked[1]])
     updateTextInput(session, "gene2", value = row.names(E8())[e8clicked[2]])
@@ -565,14 +600,10 @@ server <- function(input, output, session){
  
   #this assigns the NvERTx numbers to the nve object
   nve <- eventReactive(input$do, {
-    c(trimws(input$gene1), trimws(input$gene2), trimws(input$gene3), trimws(input$gene4), trimws(input$gene5))
+    nve <- c(trimws(input$gene1), trimws(input$gene2), trimws(input$gene3), trimws(input$gene4), trimws(input$gene5))
+    nve[nve != ""]
   }, ignoreNULL= T)
   
-  #remove empty elements of the nve vector
-  nve1 <- reactive({
-    nve()[nve() != ""]
-  })
-
   ##########
   ##
   ##
@@ -583,53 +614,57 @@ server <- function(input, output, session){
   
   #this subsets the count table by the nve numbers
   gene <- reactive({
+    req(nve())
     if (as.numeric(input$log) >0 ){
-      counts <- dbGetQuery(con, paste0("select * from ER_plotter_regen_cpm where nvertx_id in (",paste("'",as.character(nve1()),"'",collapse=", ",sep=""),")"))
+      counts <- dbGetQuery(con, paste0("select * from ER_plotter_regen_cpm where nvertx_id in (",paste("'",as.character(nve()),"'",collapse=", ",sep=""),")"))
       rownames(counts) <- counts$nvertx_id
       ID <- counts$nvertx_id
       counts <- counts[-c(1)]
       counts <- log(counts +1 , base=2)
       counts$ID <- ID
       names(counts) <- c("-1","0","2","4","8","12","16","20","24","36","48","60","72","96","120","144","ID")
+      counts<- counts[complete.cases(counts),]
     } else {
-      counts <- dbGetQuery(con, paste0("select * from ER_plotter_regen_cpm where nvertx_id in (",paste("'",as.character(nve1()),"'",collapse=", ",sep=""),")"))
+      counts <- dbGetQuery(con, paste0("select * from ER_plotter_regen_cpm where nvertx_id in (",paste("'",as.character(nve()),"'",collapse=", ",sep=""),")"))
       rownames(counts) <- counts$nvertx_id
       ID <- counts$nvertx_id
       counts <- counts[-c(1)]
       counts$ID <- ID
       names(counts) <- c("-1","0","2","4","8","12","16","20","24","36","48","60","72","96","120","144","ID")
+      counts<- counts[complete.cases(counts),]
     }
     counts
   })
-  
-  gene1 <- reactive({
-    gene()[complete.cases(gene()),]
-  })
-  
+
   #same workflow, subsetting the SE values
   geneSE <- reactive({
+    req(nve())
     if (as.numeric(input$log) >0 ){
-      countsSE <- dbGetQuery(con, paste0("select * from ER_plotter_regen_log_se where nvertx_id in (",paste("'",as.character(nve1()),"'",collapse=", ",sep=""),")"))
+      req(nve())
+      countsSE <- dbGetQuery(con, paste0("select * from ER_plotter_regen_log_se where nvertx_id in (",paste("'",as.character(nve()),"'",collapse=", ",sep=""),")"))
       rownames(countsSE) <- countsSE$nvertx_id
       ID <- countsSE$nvertx_id
       countsSE <- countsSE[-c(1)]
       countsSE$ID <- ID
       names(countsSE) <- c("-1","0","2","4","8","12","16","20","24","36","48","60","72","96","120","144","ID")
+      countsSE<- countsSE[complete.cases(countsSE),]
     } else {
-      countsSE <- dbGetQuery(con, paste0("select * from ER_plotter_regen_se where nvertx_id in (",paste("'",as.character(nve1()),"'",collapse=", ",sep=""),")"))
+      countsSE <- dbGetQuery(con, paste0("select * from ER_plotter_regen_se where nvertx_id in (",paste("'",as.character(nve()),"'",collapse=", ",sep=""),")"))
       rownames(countsSE) <- countsSE$nvertx_id
       ID <- countsSE$nvertx_id
       countsSE <- countsSE[-c(1)]
       countsSE$ID <- ID
       names(countsSE) <- c("-1","0","2","4","8","12","16","20","24","36","48","60","72","96","120","144","ID")
+      countsSE<- countsSE[complete.cases(countsSE),]
     }
     countsSE
   })
   
-  #removing NAs
-  geneSE1 <- reactive({
-    geneSE()[complete.cases(geneSE()),]
+  output$table <- renderTable({
+    req(gene())
+    gene()[,c(ncol(gene()),1:ncol(gene())-1)]
   })
+  
   
   ##########
   ##
@@ -640,19 +675,26 @@ server <- function(input, output, session){
   ##########
   
   #melt the data for plotting
-  genet <- reactive({
-    melt(gene1())
+  geneMolten <- reactive({
+    req(gene())
+    melt(gene())
   }) #this puts samples as rows, genes as columns 
-  genetSE <- reactive({
-    melt(geneSE1())
+  geneMoltenSE <- reactive({
+    req(geneSE())
+    melt(geneSE())
   }) #this puts samples as rows, genes as columns 
   
   # this uses the SE values to make the error bar limits
-  limits <- reactive(aes(ymax = genet()$value + genetSE()$value, ymin=genet()$value - genetSE()$value)) # This is the calculation for the error bars
+  limits <- reactive({
+    req(geneMolten(),geneMoltenSE())
+    limits <- aes(ymax = geneMolten()$value + geneMoltenSE()$value, ymin=geneMolten()$value - geneMoltenSE()$value)
+    limits
+    }) # This is the calculation for the error bars
   #for whatever reason I couldnt do the same for the embryonic. I had to explicitly map them in the Geom_errorbar() below
   
   p <- reactive({
-    ggplot(genet(), aes(x=as.numeric(as.character(genet()$variable)), y=value, colour=ID)) + geom_line() +
+    req(geneMolten())
+    ggplot(geneMolten(), aes(x=as.numeric(as.character(geneMolten()$variable)), y=value, colour=ID)) + geom_line() +
       theme(axis.text.x = element_text(colour="grey20",size=12,angle=0,hjust=.5,vjust=.5,face="plain"),
             axis.text.y = element_text(colour="grey20",size=12,angle=0,hjust=1,vjust=0,face="plain"),  
             axis.title.x = element_text(colour="grey20",size=12,angle=0,hjust=.5,vjust=0,face="plain"),
@@ -660,7 +702,8 @@ server <- function(input, output, session){
     
   })
   r <- reactive({
-    ggplot(genet(), aes(x=as.numeric(as.character(genet()$variable)), y=value, colour=ID)) + geom_line() +
+    req(geneMolten())
+    ggplot(geneMolten(), aes(x=as.numeric(as.character(geneMolten()$variable)), y=value, colour=ID)) + geom_line() +
       geom_emoji(emoji="1f433") +
       theme(axis.text.x = element_text(colour="grey20",size=12,angle=0,hjust=.5,vjust=.5,face="plain"),
             axis.text.y = element_text(colour="grey20",size=12,angle=0,hjust=1,vjust=0,face="plain"),  
@@ -668,7 +711,8 @@ server <- function(input, output, session){
             axis.title.y = element_text(colour="grey20",size=12,angle=90,hjust=.5,vjust=.5,face="plain"))
   })
   s <- reactive({
-    ggplot(genet(), aes(x=as.numeric(as.character(genet()$variable)), y=value, colour=ID)) + geom_line() +
+    req(geneMolten())
+    ggplot(geneMolten(), aes(x=as.numeric(as.character(geneMolten()$variable)), y=value, colour=ID)) + geom_line() +
       geom_emoji(emoji="1f412") +
       theme(axis.text.x = element_text(colour="grey20",size=12,angle=0,hjust=.5,vjust=.5,face="plain"),
             axis.text.y = element_text(colour="grey20",size=12,angle=0,hjust=1,vjust=0,face="plain"),  
@@ -676,7 +720,8 @@ server <- function(input, output, session){
             axis.title.y = element_text(colour="grey20",size=12,angle=90,hjust=.5,vjust=.5,face="plain"))
   })
   t <- reactive({
-    ggplot(genet(), aes(x=as.numeric(as.character(genet()$variable)), y=value, colour=ID)) + geom_line() +
+    req(geneMolten())
+    ggplot(geneMolten(), aes(x=as.numeric(as.character(geneMolten()$variable)), y=value, colour=ID)) + geom_line() +
       geom_emoji(emoji="1f369") +
       theme(axis.text.x = element_text(colour="grey20",size=12,angle=0,hjust=.5,vjust=.5,face="plain"),
             axis.text.y = element_text(colour="grey20",size=12,angle=0,hjust=1,vjust=0,face="plain"),  
@@ -686,6 +731,7 @@ server <- function(input, output, session){
   
   # 3% chance to get an emoji plot!
   rplot <- reactive({
+    req(r(),s(),t(),p())
     emog <- sample(c(1:100), 1, replace = FALSE, prob = NULL)
     if (emog %in% c(1)){
       return(r())
@@ -708,6 +754,7 @@ server <- function(input, output, session){
   })
   
   output$plot1 <- renderPlot({ 
+    req(rplot(),limits(),y_label())
     #to get the graph to show up in shiny you need to print 
     print(rplot()+ scale_x_continuous(minor_breaks = NULL, breaks=c(0,2,4,8,12,16,20,24,36,48,60,72,96,120,144)) +
             geom_errorbar(limits(), width=0.2) +
@@ -715,17 +762,18 @@ server <- function(input, output, session){
             xlab("Hours Post Amputation"))  
   })
   
-  output$downloadRegenPlot <- downloadHandler(
+  output$downloadPlot <- downloadHandler(
     filename = 'Rplot.pdf',
     content = function(file) {
       device <- function(..., width, height) {
         grDevices::pdf(..., width = as.numeric(input$w), height=as.numeric(input$h)
         )
       }
-      ggsave(file, plot = p()+ scale_x_continuous(minor_breaks = NULL, breaks=c(0,2,4,8,12,16,20,24,36,48,60,72,96,120,144)) +
+      ggsave(file, plot = p()+ scale_x_continuous(minor_breaks = NULL, breaks=c(0,6,12,24,48,72,96,120,144,168,192,120,240)) +
                geom_errorbar(limits(), width=0.2) +
                ylab(y_label()) +
-               xlab("Hours Post Amputation"), device = device)
+               ylab("Log2(Counts per million +1)") +
+               xlab("Hours Post Fertilization"), device = device)
     }
   )
   
@@ -738,27 +786,27 @@ server <- function(input, output, session){
   ##########
   
   Egene <- reactive({
-    EmbryoSQL <- dbGetQuery(con, paste0("select * from ER_plotter_embryo_cpm where nvertx_id in (",paste("'",as.character(nve1()),"'",collapse=", ",sep=""),")"))
+    req(nve())
+    EmbryoSQL <- dbGetQuery(con, paste0("select * from ER_plotter_embryo_cpm where nvertx_id in (",paste("'",as.character(nve()),"'",collapse=", ",sep=""),")"))
     rownames(EmbryoSQL) <- EmbryoSQL$nvertx_id
     EmbryoSQL$ID <- EmbryoSQL$nvertx_id
     EmbryoSQL <- EmbryoSQL[-c(1)]
     names(EmbryoSQL) <- c("24","48","72","96","120","144","168","192","0","1","2","3","4","5","6","7","8","9","10","11",
                           "12","13","14","15","16","17","18","19","2","7","12","24","120","240","2","7","12","24","120","ID")
+    EmbryoSQL <- EmbryoSQL[complete.cases(EmbryoSQL),]
     EmbryoSQL
   })
-  
-  #Extra step for embryo to get rid of duplicate values
-  Egene1 <- reactive({
-    Egene()[complete.cases(Egene()),]
-  })
-  
+
   #this gets the mean
   Egenex <- reactive({
-    Egene1()[c(2:4, 6:10, 12:15,17:20, 22:28,34:40)]
+    req(Egene())
+    Egene()[c(2:4, 6:10, 12:15,17:20, 22:28,34:40)]
   })
+  
   #same workflow, subsetting the SE values
   EgeneSE <- reactive({
-    EmbryoSESQL <- dbGetQuery(con, paste0("select * from ER_plotter_embryo_se where nvertx_id in (",paste("'",as.character(nve1()),"'",collapse=", ",sep=""),")"))
+    req(nve())
+    EmbryoSESQL <- dbGetQuery(con, paste0("select * from ER_plotter_embryo_se where nvertx_id in (",paste("'",as.character(nve()),"'",collapse=", ",sep=""),")"))
     rownames(EmbryoSESQL) <- EmbryoSESQL$nvertx_id
     EmbryoSESQL$ID <- EmbryoSESQL$nvertx_id
     EmbryoSESQL <- EmbryoSESQL[-c(1)]
@@ -769,56 +817,65 @@ server <- function(input, output, session){
   })
   
   Egenet <- reactive({
+    req(Egenex())
     melt(Egenex())
   })
   
   #this separates the Embryo datasets so they plot with different shapes
   E <- reactive({
-    Egene1()[c(1:8,40)]
+    req(Egene())
+    Egene()[c(1:8,40)]
   })
   Et <- reactive({
+    req(E())
     melt(E())
   })
   ERSE <- reactive({
+    req(EgeneSE())
     ERSEx <- EgeneSE()[c(1:8,35)]
     melt(ERSEx)
   })
   
   Fisch <- reactive({
-    Egene1()[c(9:28,40)]
+    req(Egene())
+    Egene()[c(9:28,40)]
   })
   Ft <- reactive({
+    req(Fisch())
     melt(Fisch())
   })
   FSE <- reactive({
+    req(EgeneSE())
     FSEx <- EgeneSE()[c(9:28,35)]
     melt(FSEx)
   })
   
   H <- reactive({
-    Egene1()[c(29:34,40)]
+    req(Egene())
+    Egene()[c(29:34,40)]
   })
   Ht <- reactive({
+    req(H())
     melt(H())
   })
   HSE <- reactive({
+    req(EgeneSE())
     HSEx <- EgeneSE()[c(29:34,35)]
     melt(HSEx)
   })
   
   #first we output the table.  It looks nicer in the long format, hence the 't' for transpose
   #tables are reordered with Id first when printed : last column first then column from 1 to last-1
-  output$table <- renderTable({
-    gene1()[,c(ncol(gene1()),1:ncol(gene1())-1)]
-  })
-  
   output$table3 <- renderTable({
+    req(E())
     E()[,c(ncol(E()),1:ncol(E())-1)]
   })
   output$table4 <- renderTable({
+    req(Fisch())
     Fisch()[,c(ncol(Fisch()),1:ncol(Fisch())-1)]
   })
   output$table5 <- renderTable({
+    req(H())
     H()[,c(ncol(H()),1:ncol(H())-1)]
   })
   
@@ -831,6 +888,7 @@ server <- function(input, output, session){
   ##########
   
   q <- reactive({
+    req(Egenet())
     ggplot(Egenet(), aes(x=as.numeric(as.character(Egenet()$variable)), y=value, colour=ID)) + geom_line() +
       scale_shape_discrete(solid=F, name='Dataset') +
       geom_point(data = Et(), aes(x=as.numeric(as.character(Et()$variable)), y=value, colour=ID, shape='Warner et al. (2017)'), size=2) +
@@ -842,6 +900,7 @@ server <- function(input, output, session){
             axis.title.y = element_text(colour="grey20",size=12,angle=90,hjust=.5,vjust=.5,face="plain"))
   })
   output$plot2 <- renderPlot({ 
+    req(q())
     #to get the graph to show up in shiny you need to print 
     print(q()+ scale_x_continuous(minor_breaks = NULL, breaks=c(0,6,12,24,48,72,96,120,144,168,192,120,240)) +
             geom_errorbar(data = Et(), aes(x=as.numeric(as.character(Et()$variable)), y=value, ymax = Et()$value + ERSE()$value, ymin=Et()$value - ERSE()$value, width=0.2)) +
@@ -872,11 +931,13 @@ server <- function(input, output, session){
   ##########
   
   annot <- reactive({
-    dbGetQuery(con, paste0("select * from ER_plotter_annotation where nvertx_id in (",paste("'",as.character(nve1()),"'",collapse=", ",sep=""),")"))
+    req(nve())
+    dbGetQuery(con, paste0("select * from ER_plotter_annotation where nvertx_id in (",paste("'",as.character(nve()),"'",collapse=", ",sep=""),")"))
   })
 
   # build up the annotation table with clickable links:
   annotTable <- reactive({
+    req(annot())
     uprot <- annot()$Uniprot_ID
     uprotURL <- lapply(uprot,function(i) {
       if (is.na(i)) {
@@ -910,6 +971,7 @@ server <- function(input, output, session){
   
   #this makes the datatable expandle when you click the icon
   output$table2 <- DT::renderDataTable({
+    req(annotTable())
     datatable( cbind(' ' = '&oplus;', annotTable()),
                rownames = T,
                escape = F,
@@ -948,6 +1010,7 @@ server <- function(input, output, session){
   
   ##output the PubMed URLs:
   pubURLs <- reactive({
+    req(annot())
     pubs <- strsplit(as.character(annot()$Top_nr_hit_eval), '|', fixed=TRUE)
     pubsp <- lapply(pubs, '[', 2)
     
@@ -982,6 +1045,7 @@ server <- function(input, output, session){
   })
   
   output$tableP <- DT::renderDataTable({
+    req(pubURLs())
     datatable(pubURLs(), 
               options = list(dom = 't'))
   })
@@ -995,7 +1059,8 @@ server <- function(input, output, session){
   ##########
   
   output$tableF <- renderTable({
-    fastaSQL <- dbGetQuery(con, paste0("select * from ER_plotter_fasta where nvertx_id in (",paste("'",as.character(nve1()),"'",collapse=", ",sep=""),")"))
+    req(nve())
+    fastaSQL <- dbGetQuery(con, paste0("select * from ER_plotter_fasta where nvertx_id in (",paste("'",as.character(nve()),"'",collapse=", ",sep=""),")"))
     rownames(fastaSQL) <- fastaSQL$nvertx_id
     fastaSQL <- fastaSQL[-c(1)]
     names(fastaSQL) <- c("Sequence")
@@ -1021,6 +1086,7 @@ server <- function(input, output, session){
   },ignoreNULL= T)
   
   output$conversionTable <- renderDataTable({
+    req(NewIDS())
     NewIDS()
   }, rownames= FALSE)
   
@@ -1029,6 +1095,7 @@ server <- function(input, output, session){
   })
   
   observe({
+    req(NewIDS())
     NewIDSclicked = input$conversionTable_rows_selected
     updateTextInput(session, "gene1", value = NewIDS()$NvERTx.4[NewIDSclicked[1]])
     updateTextInput(session, "gene2", value = NewIDS()$NvERTx.4[NewIDSclicked[2]])
@@ -1055,30 +1122,26 @@ server <- function(input, output, session){
   
   #Now to parse the results...
   parsedresults <- reactive({
-    if (is.null(blastresults())){}
-    else {
-      xmltop = xmlRoot(blastresults())
+    req(blastresults())
+    xmltop = xmlRoot(blastresults())
       
-      #the first chunk is for multi-fastas
-      results <- xpathApply(blastresults(), '//Iteration',function(row){
-        query_ID <- getNodeSet(row, 'Iteration_query-def') %>% sapply(., xmlValue)
-        hit_IDs <- getNodeSet(row, 'Iteration_hits//Hit//Hit_id') %>% sapply(., xmlValue)
-        hit_length <- getNodeSet(row, 'Iteration_hits//Hit//Hit_len') %>% sapply(., xmlValue)
-        bitscore <- getNodeSet(row, 'Iteration_hits//Hit//Hit_hsps//Hsp//Hsp_bit-score') %>% sapply(., xmlValue)
-        eval <- getNodeSet(row, 'Iteration_hits//Hit//Hit_hsps//Hsp//Hsp_evalue') %>% sapply(., xmlValue)
-        cbind(query_ID,hit_IDs,hit_length,bitscore,eval)
-      })
-      #this ensures that NAs get added for no hits
-      results <-  rbind.fill(lapply(results,function(y){as.data.frame((y),stringsAsFactors=FALSE)}))
-    }
+    #the first chunk is for multi-fastas
+    results <- xpathApply(blastresults(), '//Iteration',function(row){
+      query_ID <- getNodeSet(row, 'Iteration_query-def') %>% sapply(., xmlValue)
+      hit_IDs <- getNodeSet(row, 'Iteration_hits//Hit//Hit_id') %>% sapply(., xmlValue)
+      hit_length <- getNodeSet(row, 'Iteration_hits//Hit//Hit_len') %>% sapply(., xmlValue)
+      bitscore <- getNodeSet(row, 'Iteration_hits//Hit//Hit_hsps//Hsp//Hsp_bit-score') %>% sapply(., xmlValue)
+      eval <- getNodeSet(row, 'Iteration_hits//Hit//Hit_hsps//Hsp//Hsp_evalue') %>% sapply(., xmlValue)
+      cbind(query_ID,hit_IDs,hit_length,bitscore,eval)
+    })
+    #this ensures that NAs get added for no hits
+    results <-  rbind.fill(lapply(results,function(y){as.data.frame((y),stringsAsFactors=FALSE)}))
   })
   
   #makes the datatable
   output$blastResults <- renderDataTable({
-    if (is.null(blastresults())){
-    } else {
-      parsedresults()
-    }
+    req(parsedresults())
+    parsedresults()
   },rownames =F)
   
   #this chunk gets the alignemnt information from a clicked row
@@ -1125,6 +1188,7 @@ server <- function(input, output, session){
     }
   })
   observe({
+    req(parsedresults())
     if (input$db =="NvERTx.4"){
       blastclicked = input$blastResults_rows_selected
       updateTextInput(session, "gene1", value = parsedresults()$hit_IDs[blastclicked[1]])
@@ -1134,5 +1198,7 @@ server <- function(input, output, session){
       updateTextInput(session, "gene5", value = parsedresults()$hit_IDs[blastclicked[5]])
     }
   })
-  
+  session$onSessionEnded(function() {
+    dbDisconnect(con)
+  })
 }
