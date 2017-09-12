@@ -1244,7 +1244,7 @@ server <- function(input, output, session){
   
   
   gene_list <- reactive({
-    list <- paste0(input$volcano,".txt")
+    list <- paste0("tables/",input$volcano,".txt")
     gene_list <- read.table(file= list, header=T, quote = "", sep='\t')
     gene_list$threshold = as.factor(abs(gene_list$logFC) > 2 & gene_list$FDR < 0.05)
     #gene_listcut <- gene_list[gene_list$FDR < input$cutoff,]
