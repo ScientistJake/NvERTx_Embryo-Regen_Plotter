@@ -1091,7 +1091,7 @@ server <- function(input, output, session){
   ##########
   
   IDtable <- eventReactive(input$convert == 1,{
-      IDs <- read.table(file="IDtable.txt", sep='\t', header=T, quote="")
+      IDs <- read.table(file="tables/IDtable.txt", sep='\t', header=T, quote="")
       IDs
   },ignoreNULL= T)
   
