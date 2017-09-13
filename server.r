@@ -99,496 +99,122 @@ server <- function(input, output, session){
   ##
   ##
   ##########
+
+  #initialize the cluster reactive value:
+  cluster <- reactiveValues(cl = NULL)
   
-  M1 <- eventReactive(input$M1,{
-    M1 <- dbGetQuery(con, "select * from ER_plotter_annotation where Mfuzz_R_Clust in ('R-1')")
-    row.names(M1) <- M1$nvertx_id
-    M1 <- M1[,c(4,5,9,10)]
-    M1[order(-M1$Mfuzz_R_Score),]
-  },ignoreNULL= T)
-  
-  output$tableM1 <- renderDataTable({
-    req(M1())
-    datatable(M1(),extensions = 'Buttons', options = list(dom = 'Blfrtip',buttons = c('copy', 'csv', 'excel', 'pdf', 'print')))
+  #re-assign cluster according to button
+  observeEvent(input$R1,{ 
+    cluster$cl <- c("R-1") 
+    toggleModal(session, "mfuzzx", "open") 
+  })
+  observeEvent(input$R2,{ 
+    cluster$cl <- c("R-2") 
+    toggleModal(session, "mfuzzx", "open") 
+  })
+  observeEvent(input$R3,{ 
+    cluster$cl <- c("R-3") 
+    toggleModal(session, "mfuzzx", "open") 
+  })
+  observeEvent(input$R4,{ 
+    cluster$cl <- c("R-4") 
+    toggleModal(session, "mfuzzx", "open") 
+  })
+  observeEvent(input$R5,{ 
+    cluster$cl <- c("R-5") 
+    toggleModal(session, "mfuzzx", "open") 
+  })
+  observeEvent(input$R6,{ 
+    cluster$cl <- c("R-6") 
+    toggleModal(session, "mfuzzx", "open") 
+  })
+  observeEvent(input$R7,{ 
+    cluster$cl <- c("R-7") 
+    toggleModal(session, "mfuzzx", "open") 
+  })
+  observeEvent(input$R8,{ 
+    cluster$cl <- c("R-8") 
+    toggleModal(session, "mfuzzx", "open") 
+  })
+  observeEvent(input$R9,{ 
+    cluster$cl <- c("R-9") 
+    toggleModal(session, "mfuzzx", "open") 
+  })
+  observeEvent(input$E1,{ 
+    cluster$cl <- c("E-1") 
+    toggleModal(session, "mfuzzx", "open") 
+  })
+  observeEvent(input$E2,{ 
+    cluster$cl <- c("E-2") 
+    toggleModal(session, "mfuzzx", "open") 
+  })
+  observeEvent(input$E3,{ 
+    cluster$cl <- c("E-3") 
+    toggleModal(session, "mfuzzx", "open") 
+  })
+  observeEvent(input$E4,{ 
+    cluster$cl <- c("E-4") 
+    toggleModal(session, "mfuzzx", "open") 
+  })
+  observeEvent(input$E5,{ 
+    cluster$cl <- c("E-5") 
+    toggleModal(session, "mfuzzx", "open") 
+  })
+  observeEvent(input$E6,{ 
+    cluster$cl <- c("E-6") 
+    toggleModal(session, "mfuzzx", "open") 
+  })
+  observeEvent(input$E7,{ 
+    cluster$cl <- c("E-7") 
+    toggleModal(session, "mfuzzx", "open") 
+  })
+  observeEvent(input$E8,{ 
+    cluster$cl <- c("E-8") 
+    toggleModal(session, "mfuzzx", "open") 
   })
   
-  observeEvent(input$M1, {
-    toggleModal(session, "m1", "open")
+  #get the approriate table:
+  ClustTable <- reactive({
+    req(cluster$cl)
+    if (startsWith(cluster$cl, "R-")){
+        query <- paste0("select * from ER_plotter_annotation where Mfuzz_R_Clust in ('",cluster$cl,"')")
+      } else {
+        query <- paste0("select * from ER_plotter_annotation where Mfuzz_E_Clust in ('",cluster$cl,"')")
+      }
+    Cluster <- dbGetQuery(con, query)
+    row.names(Cluster) <- Cluster$nvertx_id
+    if (startsWith(cluster$cl, "R-")){
+      Cluster <- Cluster[,c(4,5,9,10)]
+      Cluster[order(-Cluster$Mfuzz_R_Score),]
+    } else {
+      Cluster <- Cluster[,c(6,7,9,10)]
+      Cluster[order(-Cluster$Mfuzz_E_Score),]
+    }  
   })
   
-  #this code block updates the inputs if a row is clicked on the pop-up table
+  output$tableClust <- renderDataTable({
+    req(ClustTable())
+    datatable(ClustTable(),extensions = 'Buttons', options = list(dom = 'Blfrtip',buttons = c('copy', 'csv', 'excel', 'pdf', 'print')))
+  })
+  
+  output$mfuzzModal <- renderUI({
+    bsModal("mfuzzx", paste0("Mfuzz Cluster ",cluster$cl), "", size = "large",
+             img(src=paste0("Mfuzz",cluster$cl,".png"), height = 350, width = 350),
+             h4("Biological process GO enrichment:"),
+             img(src=paste0("BP",cluster$cl,".png"), height = 450, width = 600),
+             dataTableOutput('tableClust'))
+  })
+  
   observe({
-    req(M1())
-    m1clicked = input$tableM1_rows_selected
-    updateTextInput(session, "gene1", value = row.names(M1())[m1clicked[1]])
-    updateTextInput(session, "gene2", value = row.names(M1())[m1clicked[2]])
-    updateTextInput(session, "gene3", value = row.names(M1())[m1clicked[3]])
-    updateTextInput(session, "gene4", value = row.names(M1())[m1clicked[4]])
-    updateTextInput(session, "gene5", value = row.names(M1())[m1clicked[5]])
-  })
-  
-  M2 <- eventReactive(input$M2,{
-    M2 <- dbGetQuery(con, "select * from ER_plotter_annotation where Mfuzz_R_Clust in ('R-2')")
-    row.names(M2) <- M2$nvertx_id
-    M2 <- M2[,c(4,5,9,10)]
-    M2[order(-M2$Mfuzz_R_Score),]
-  },ignoreNULL= T)
-  
-  output$tableM2 <- renderDataTable({
-    req(M2())
-    datatable(M2(),extensions = 'Buttons', options = list(dom = 'Blfrtip',buttons = c('copy', 'csv', 'excel', 'pdf', 'print')))
-  })
-  
-  observeEvent(input$M2, {
-    toggleModal(session, "m2", "open")
-  })
-  
-  #this code block updates the inputs if a row is clicked on the pop-up table
-  observe({
-    req(M2())
-    m2clicked = input$tableM2_rows_selected
-    updateTextInput(session, "gene1", value = row.names(M2())[m2clicked[1]])
-    updateTextInput(session, "gene2", value = row.names(M2())[m2clicked[2]])
-    updateTextInput(session, "gene3", value = row.names(M2())[m2clicked[3]])
-    updateTextInput(session, "gene4", value = row.names(M2())[m2clicked[4]])
-    updateTextInput(session, "gene5", value = row.names(M2())[m2clicked[5]])
-  })
-  
-  M3 <- eventReactive(input$M3,{
-    M3 <- dbGetQuery(con, "select * from ER_plotter_annotation where Mfuzz_R_Clust in ('R-3')")
-    row.names(M3) <- M3$nvertx_id
-    M3 <- M3[,c(4,5,9,10)]
-    M3[order(-M3$Mfuzz_R_Score),]
-  },ignoreNULL= T)
-  
-  output$tableM3 <- renderDataTable({
-    req(M3())
-    datatable(M3(),extensions = 'Buttons', options = list(dom = 'Blfrtip',buttons = c('copy', 'csv', 'excel', 'pdf', 'print')))
-  })
-  
-  observeEvent(input$M3, {
-    toggleModal(session, "m3", "open")
-  })
-  
-  #this code block updates the inputs if a row is clicked on the pop-up table
-  observe({
-    req(M3())
-    m3clicked = input$tableM3_rows_selected
-    updateTextInput(session, "gene1", value = row.names(M3())[m3clicked[1]])
-    updateTextInput(session, "gene2", value = row.names(M3())[m3clicked[2]])
-    updateTextInput(session, "gene3", value = row.names(M3())[m3clicked[3]])
-    updateTextInput(session, "gene4", value = row.names(M3())[m3clicked[4]])
-    updateTextInput(session, "gene5", value = row.names(M3())[m3clicked[5]])
-  })
-  
-  M4 <- eventReactive(input$M4,{
-    M4 <- dbGetQuery(con, "select * from ER_plotter_annotation where Mfuzz_R_Clust in ('R-4')")
-    row.names(M4) <- M4$nvertx_id
-    M4 <- M4[,c(4,5,9,10)]
-    M4[order(-M4$Mfuzz_R_Score),]
-  },ignoreNULL= T)
-  
-  output$tableM4 <- renderDataTable({
-    req(M4())
-    datatable(M4(),extensions = 'Buttons', options = list(dom = 'Blfrtip',buttons = c('copy', 'csv', 'excel', 'pdf', 'print')))
-  })
-  
-  observeEvent(input$M4, {
-    toggleModal(session, "m4", "open")
-  })
-  
-  #this code block updates the inputs if a row is clicked on the pop-up table
-  observe({
-    req(M4())
-    m4clicked = input$tableM4_rows_selected
-    updateTextInput(session, "gene1", value = row.names(M4())[m4clicked[1]])
-    updateTextInput(session, "gene2", value = row.names(M4())[m4clicked[2]])
-    updateTextInput(session, "gene3", value = row.names(M4())[m4clicked[3]])
-    updateTextInput(session, "gene4", value = row.names(M4())[m4clicked[4]])
-    updateTextInput(session, "gene5", value = row.names(M4())[m4clicked[5]])
-  })
-  
-  M5 <- eventReactive(input$M5,{
-    M5 <- dbGetQuery(con, "select * from ER_plotter_annotation where Mfuzz_R_Clust in ('R-5')")
-    row.names(M5) <- M5$nvertx_id
-    M5 <- M5[,c(4,5,9,10)]
-    M5[order(-M5$Mfuzz_R_Score),]
-  },ignoreNULL= T)
-  
-  output$tableM5 <- renderDataTable({
-    req(M5())
-    datatable(M5(),extensions = 'Buttons', options = list(dom = 'Blfrtip',buttons = c('copy', 'csv', 'excel', 'pdf', 'print')))
-  })
-  
-  observeEvent(input$M5, {
-    toggleModal(session, "m5", "open")
-  })
-  
-  #this code block updates the inputs if a row is clicked on the pop-up table
-  observe({
-    req(M5())
-    m5clicked = input$tableM5_rows_selected
-    updateTextInput(session, "gene1", value = row.names(M5())[m5clicked[1]])
-    updateTextInput(session, "gene2", value = row.names(M5())[m5clicked[2]])
-    updateTextInput(session, "gene3", value = row.names(M5())[m5clicked[3]])
-    updateTextInput(session, "gene4", value = row.names(M5())[m5clicked[4]])
-    updateTextInput(session, "gene5", value = row.names(M5())[m5clicked[5]])
-  })
-  
-  M6 <- eventReactive(input$M6,{
-    M6 <- dbGetQuery(con, "select * from ER_plotter_annotation where Mfuzz_R_Clust in ('R-6')")
-    row.names(M6) <- M6$nvertx_id
-    M6 <- M6[,c(4,5,9,10)]
-    M6[order(-M6$Mfuzz_R_Score),]
-  },ignoreNULL= T)
-  
-  output$tableM6 <- renderDataTable({
-    req(M6())
-    datatable(M6(),extensions = 'Buttons', options = list(dom = 'Blfrtip',buttons = c('copy', 'csv', 'excel', 'pdf', 'print')))
-  })
-  
-  observeEvent(input$M6, {
-    toggleModal(session, "m6", "open")
-  })
-  
-  #this code block updates the inputs if a row is clicked on the pop-up table
-  observe({
-    req(M6())
-    m6clicked = input$tableM6_rows_selected
-    updateTextInput(session, "gene1", value = row.names(M6())[m6clicked[1]])
-    updateTextInput(session, "gene2", value = row.names(M6())[m6clicked[2]])
-    updateTextInput(session, "gene3", value = row.names(M6())[m6clicked[3]])
-    updateTextInput(session, "gene4", value = row.names(M6())[m6clicked[4]])
-    updateTextInput(session, "gene5", value = row.names(M6())[m6clicked[5]])
-  })
-  
-  M7 <- eventReactive(input$M7,{
-    M7 <- dbGetQuery(con, "select * from ER_plotter_annotation where Mfuzz_R_Clust in ('R-7')")
-    row.names(M7) <- M7$nvertx_id
-    M7 <- M7[,c(4,5,9,10)]
-    M7[order(-M7$Mfuzz_R_Score),]
-  },ignoreNULL= T)
-  
-  output$tableM7 <- renderDataTable({
-    req(M7())
-    datatable(M7(),extensions = 'Buttons', options = list(dom = 'Blfrtip',buttons = c('copy', 'csv', 'excel', 'pdf', 'print')))
-  })
-  
-  observeEvent(input$M7, {
-    toggleModal(session, "m7", "open")
-  })
-  #this code block updates the inputs if a row is clicked on the pop-up table
-  observe({
-    req(M7())
-    m7clicked = input$tableM7_rows_selected
-    updateTextInput(session, "gene1", value = row.names(M7())[m7clicked[1]])
-    updateTextInput(session, "gene2", value = row.names(M7())[m7clicked[2]])
-    updateTextInput(session, "gene3", value = row.names(M7())[m7clicked[3]])
-    updateTextInput(session, "gene4", value = row.names(M7())[m7clicked[4]])
-    updateTextInput(session, "gene5", value = row.names(M7())[m7clicked[5]])
-  })
-  
-  M8 <- eventReactive(input$M8,{
-    M8 <- dbGetQuery(con, "select * from ER_plotter_annotation where Mfuzz_R_Clust in ('R-8')")
-    row.names(M8) <- M8$nvertx_id
-    M8 <- M8[,c(4,5,9,10)]
-    M8[order(-M8$Mfuzz_R_Score),]
-  },ignoreNULL= T)
-  
-  output$tableM8 <- renderDataTable({
-    req(M8())
-    datatable(M8(),extensions = 'Buttons', options = list(dom = 'Blfrtip',buttons = c('copy', 'csv', 'excel', 'pdf', 'print')))
-  })
-  
-  observeEvent(input$M8, {
-    toggleModal(session, "m8", "open")
-  })
-  
-  #this code block updates the inputs if a row is clicked on the pop-up table
-  observe({
-    req(M8())
-    m8clicked = input$tableM8_rows_selected
-    updateTextInput(session, "gene1", value = row.names(M8())[m8clicked[1]])
-    updateTextInput(session, "gene2", value = row.names(M8())[m8clicked[2]])
-    updateTextInput(session, "gene3", value = row.names(M8())[m8clicked[3]])
-    updateTextInput(session, "gene4", value = row.names(M8())[m8clicked[4]])
-    updateTextInput(session, "gene5", value = row.names(M8())[m8clicked[5]])
-  })
-  
-  M9 <- eventReactive(input$M9,{
-    M9 <- dbGetQuery(con, "select * from ER_plotter_annotation where Mfuzz_R_Clust in ('R-9')")
-    row.names(M9) <- M9$nvertx_id
-    M9 <- M9[,c(4,5,9,10)]
-    M9[order(-M9$Mfuzz_R_Score),]
-  },ignoreNULL= T)
-  
-  output$tableM9 <- renderDataTable({
-    req(M9())
-    datatable(M9(),extensions = 'Buttons', options = list(dom = 'Blfrtip',buttons = c('copy', 'csv', 'excel', 'pdf', 'print')))
-  })
-  
-  observeEvent(input$M9, {
-    toggleModal(session, "m9", "open")
-  })
-  
-  #this code block updates the inputs if a row is clicked on the pop-up table
-  observe({
-    req(M9())
-    m9clicked = input$tableM9_rows_selected
-    updateTextInput(session, "gene1", value = row.names(M9())[m9clicked[1]])
-    updateTextInput(session, "gene2", value = row.names(M9())[m9clicked[2]])
-    updateTextInput(session, "gene3", value = row.names(M9())[m9clicked[3]])
-    updateTextInput(session, "gene4", value = row.names(M9())[m9clicked[4]])
-    updateTextInput(session, "gene5", value = row.names(M9())[m9clicked[5]])
-  })
-  
-  #  M10 <- eventReactive(input$M10,{
-  #    M10 <- annotations[annotations$Mfuzz_R_Clust %in% c("R-10"),c(4,5,9,10)]
-  #    M10[order(-M10$Mfuzz_R_Score),]
-  #  },ignoreNULL= T)
-  #  
-  #  output$tableM10 <- renderDataTable({
-  #    M10()
-  #  })
-  #  
-  #  observeEvent(input$M10, {
-  #    toggleModal(session, "m10", "open")
-  #  })
-  #  
-  #  #this code block updates the inputs if a row is clicked on the pop-up table
-  #  observe({
-  #    m10clicked = input$tableM10_rows_selected
-  #    updateTextInput(session, "gene1", value = row.names(M10())[m10clicked[1]])
-  #    updateTextInput(session, "gene2", value = row.names(M10())[m10clicked[2]])
-  #    updateTextInput(session, "gene3", value = row.names(M10())[m10clicked[3]])
-  #    updateTextInput(session, "gene4", value = row.names(M10())[m10clicked[4]])
-  #    updateTextInput(session, "gene5", value = row.names(M10())[m10clicked[5]])
-  #  })
-  
-  ##########
-  ##
-  ##
-  ## Embryo Fuzz
-  ##
-  ##
-  ##########
-  
-  E1 <- eventReactive(input$E1,{
-    E1 <- dbGetQuery(con, "select * from ER_plotter_annotation where Mfuzz_E_Clust in ('E-1')")
-    row.names(E1) <- E1$nvertx_id
-    E1 <- E1[,c(6,7,9,10)]
-    E1[order(-E1$Mfuzz_E_Score),]
-  },ignoreNULL= T)
-  
-  output$tableE1 <- renderDataTable({
-    req(E1())
-    datatable(E1(),extensions = 'Buttons', options = list(dom = 'Blfrtip',buttons = c('copy', 'csv', 'excel', 'pdf', 'print')))
-  })
-  
-  observeEvent(input$E1, {
-    toggleModal(session, "e1", "open")
-  })
-  
-  #this code block updates the inputs if a row is clicked on the pop-up table
-  observe({
-    req(E1())
-    e1clicked = input$tableE1_rows_selected
-    updateTextInput(session, "gene1", value = row.names(E1())[e1clicked[1]])
-    updateTextInput(session, "gene2", value = row.names(E1())[e1clicked[2]])
-    updateTextInput(session, "gene3", value = row.names(E1())[e1clicked[3]])
-    updateTextInput(session, "gene4", value = row.names(E1())[e1clicked[4]])
-    updateTextInput(session, "gene5", value = row.names(E1())[e1clicked[5]])
-  })
-  
-  E2 <- eventReactive(input$E2,{
-    E2 <- dbGetQuery(con, "select * from ER_plotter_annotation where Mfuzz_E_Clust in ('E-2')")
-    row.names(E2) <- E2$nvertx_id
-    E2 <- E2[,c(6,7,9,10)]
-    E2[order(-E2$Mfuzz_E_Score),]
-  },ignoreNULL= T)
-  
-  output$tableE2 <- renderDataTable({
-    req(E2())
-    datatable(E2(),extensions = 'Buttons', options = list(dom = 'Blfrtip',buttons = c('copy', 'csv', 'excel', 'pdf', 'print')))
-  })
-  
-  observeEvent(input$E2, {
-    toggleModal(session, "e2", "open")
-  })
-  
-  #this code block updates the inputs if a row is clicked on the pop-up table
-  observe({
-    req(E2())
-    e2clicked = input$tableE2_rows_selected
-    updateTextInput(session, "gene1", value = row.names(E2())[e2clicked[1]])
-    updateTextInput(session, "gene2", value = row.names(E2())[e2clicked[2]])
-    updateTextInput(session, "gene3", value = row.names(E2())[e2clicked[3]])
-    updateTextInput(session, "gene4", value = row.names(E2())[e2clicked[4]])
-    updateTextInput(session, "gene5", value = row.names(E2())[e2clicked[5]])
-  })
-  
-  E3 <- eventReactive(input$E3,{
-    E3 <- dbGetQuery(con, "select * from ER_plotter_annotation where Mfuzz_E_Clust in ('E-3')")
-    row.names(E3) <- E3$nvertx_id
-    E3 <- E3[,c(6,7,9,10)]
-    E3[order(-E3$Mfuzz_E_Score),]
-  },ignoreNULL= T)
-  
-  output$tableE3 <- renderDataTable({
-    req(E3())
-    datatable(E3(),extensions = 'Buttons', options = list(dom = 'Blfrtip',buttons = c('copy', 'csv', 'excel', 'pdf', 'print')))
-  })
-  
-  observeEvent(input$E3, {
-    toggleModal(session, "e3", "open")
-  })
-  
-  #this code block updates the inputs if a row is clicked on the pop-up table
-  observe({
-    req(E3())
-    e3clicked = input$tableE3_rows_selected
-    updateTextInput(session, "gene1", value = row.names(E3())[e3clicked[1]])
-    updateTextInput(session, "gene2", value = row.names(E3())[e3clicked[2]])
-    updateTextInput(session, "gene3", value = row.names(E3())[e3clicked[3]])
-    updateTextInput(session, "gene4", value = row.names(E3())[e3clicked[4]])
-    updateTextInput(session, "gene5", value = row.names(E3())[e3clicked[5]])
-  })
-  
-  E4 <- eventReactive(input$E4,{
-    E4 <- dbGetQuery(con, "select * from ER_plotter_annotation where Mfuzz_E_Clust in ('E-4')")
-    row.names(E4) <- E4$nvertx_id
-    E4 <- E4[,c(6,7,9,10)]
-    E4[order(-E4$Mfuzz_E_Score),]
-  },ignoreNULL= T)
-  
-  output$tableE4 <- renderDataTable({
-    req(E4())
-    datatable(E4(),extensions = 'Buttons', options = list(dom = 'Blfrtip',buttons = c('copy', 'csv', 'excel', 'pdf', 'print')))
-  })
-  
-  observeEvent(input$E4, {
-    toggleModal(session, "e4", "open")
-  })
-  
-  #this code block updates the inputs if a row is clicked on the pop-up table
-  observe({
-    req(E4())
-    e4clicked = input$tableE4_rows_selected
-    updateTextInput(session, "gene1", value = row.names(E4())[e4clicked[1]])
-    updateTextInput(session, "gene2", value = row.names(E4())[e4clicked[2]])
-    updateTextInput(session, "gene3", value = row.names(E4())[e4clicked[3]])
-    updateTextInput(session, "gene4", value = row.names(E4())[e4clicked[4]])
-    updateTextInput(session, "gene5", value = row.names(E4())[e4clicked[5]])
-  })
-  
-  E5 <- eventReactive(input$E5,{
-    E5 <- dbGetQuery(con, "select * from ER_plotter_annotation where Mfuzz_E_Clust in ('E-5')")
-    row.names(E5) <- E5$nvertx_id
-    E5 <- E5[,c(6,7,9,10)]
-    E5[order(-E5$Mfuzz_E_Score),]
-  },ignoreNULL= T)
-  
-  output$tableE5 <- renderDataTable({
-    req(E5())
-    datatable(E5(),extensions = 'Buttons', options = list(dom = 'Blfrtip',buttons = c('copy', 'csv', 'excel', 'pdf', 'print')))
-  })
-  
-  observeEvent(input$E5, {
-    toggleModal(session, "e5", "open")
-  })
-  
-  #this code block updates the inputs if a row is clicked on the pop-up table
-  observe({
-    req(E5())
-    e5clicked = input$tableE5_rows_selected
-    updateTextInput(session, "gene1", value = row.names(E5())[e5clicked[1]])
-    updateTextInput(session, "gene2", value = row.names(E5())[e5clicked[2]])
-    updateTextInput(session, "gene3", value = row.names(E5())[e5clicked[3]])
-    updateTextInput(session, "gene4", value = row.names(E5())[e5clicked[4]])
-    updateTextInput(session, "gene5", value = row.names(E5())[e5clicked[5]])
-  })
-  
-  E6 <- eventReactive(input$E6,{
-    E6 <- dbGetQuery(con, "select * from ER_plotter_annotation where Mfuzz_E_Clust in ('E-6')")
-    row.names(E6) <- E6$nvertx_id
-    E6 <- E6[,c(6,7,9,10)]
-    E6[order(-E6$Mfuzz_E_Score),]
-  },ignoreNULL= T)
-  
-  output$tableE6 <- renderDataTable({
-    req(E6())
-    datatable(E6(),extensions = 'Buttons', options = list(dom = 'Blfrtip',buttons = c('copy', 'csv', 'excel', 'pdf', 'print')))
-  })
-  
-  observeEvent(input$E6, {
-    toggleModal(session, "e6", "open")
-  })
-  
-  #this code block updates the inputs if a row is clicked on the pop-up table
-  observe({
-    req(E6())
-    e6clicked = input$tableE6_rows_selected
-    updateTextInput(session, "gene1", value = row.names(E6())[e6clicked[1]])
-    updateTextInput(session, "gene2", value = row.names(E6())[e6clicked[2]])
-    updateTextInput(session, "gene3", value = row.names(E6())[e6clicked[3]])
-    updateTextInput(session, "gene4", value = row.names(E6())[e6clicked[4]])
-    updateTextInput(session, "gene5", value = row.names(E6())[e6clicked[5]])
-  })
-  
-  E7 <- eventReactive(input$E7,{
-    E7 <- dbGetQuery(con, "select * from ER_plotter_annotation where Mfuzz_E_Clust in ('E-7')")
-    row.names(E7) <- E7$nvertx_id
-    E7 <- E7[,c(6,7,9,10)]
-    E7[order(-E7$Mfuzz_E_Score),]
-  },ignoreNULL= T)
-  
-  output$tableE7 <- renderDataTable({
-    req(E7())
-    datatable(E7(),extensions = 'Buttons', options = list(dom = 'Blfrtip',buttons = c('copy', 'csv', 'excel', 'pdf', 'print')))
-  })
-  
-  observeEvent(input$E7, {
-    toggleModal(session, "e7", "open")
-  })
-  #this code block updates the inputs if a row is clicked on the pop-up table
-  observe({
-    req(E7())
-    e7clicked = input$tableE7_rows_selected
-    updateTextInput(session, "gene1", value = row.names(E7())[e7clicked[1]])
-    updateTextInput(session, "gene2", value = row.names(E7())[e7clicked[2]])
-    updateTextInput(session, "gene3", value = row.names(E7())[e7clicked[3]])
-    updateTextInput(session, "gene4", value = row.names(E7())[e7clicked[4]])
-    updateTextInput(session, "gene5", value = row.names(E7())[e7clicked[5]])
-  })
-  
-  E8 <- eventReactive(input$E8,{
-    E8 <- dbGetQuery(con, "select * from ER_plotter_annotation where Mfuzz_E_Clust in ('E-8')")
-    row.names(E8) <- E8$nvertx_id
-    E8 <- E8[,c(6,7,9,10)]
-    E8[order(-E8$Mfuzz_E_Score),]
-  },ignoreNULL= T)
-  
-  output$tableE8 <- renderDataTable({
-    req(E8())
-    datatable(E8(),extensions = 'Buttons', options = list(dom = 'Blfrtip',buttons = c('copy', 'csv', 'excel', 'pdf', 'print')))
-  })
-  
-  observeEvent(input$E8, {
-    toggleModal(session, "e8", "open")
-  })
-  
-  #this code block updates the inputs if a row is clicked on the pop-up table
-  observe({
-    req(E8())
-    e8clicked = input$tableE8_rows_selected
-    updateTextInput(session, "gene1", value = row.names(E8())[e8clicked[1]])
-    updateTextInput(session, "gene2", value = row.names(E8())[e8clicked[2]])
-    updateTextInput(session, "gene3", value = row.names(E8())[e8clicked[3]])
-    updateTextInput(session, "gene4", value = row.names(E8())[e8clicked[4]])
-    updateTextInput(session, "gene5", value = row.names(E8())[e8clicked[5]])
+    req(ClustTable())
+    tableClustclicked = input$tableClust_rows_selected
+    updateTextInput(session, "gene1", value = row.names(ClustTable())[tableClustclicked[1]])
+    updateTextInput(session, "gene2", value = row.names(ClustTable())[tableClustclicked[2]])
+    updateTextInput(session, "gene3", value = row.names(ClustTable())[tableClustclicked[3]])
+    updateTextInput(session, "gene4", value = row.names(ClustTable())[tableClustclicked[4]])
+    updateTextInput(session, "gene5", value = row.names(ClustTable())[tableClustclicked[5]])
   })
 
-  
   ##########
   ##########
   ##########
@@ -1344,3 +970,4 @@ server <- function(input, output, session){
     dbDisconnect(con)
   })
 }
+
